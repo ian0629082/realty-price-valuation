@@ -1,0 +1,49 @@
+{
+  "name": "storemap-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "data:download": "node scripts/download-data.mjs",
+    "data:normalize": "node scripts/normalize-data.mjs",
+    "data:build-ui": "node scripts/build-ui-data.mjs",
+    "data:geocode": "node --env-file=.env.local scripts/geocode.mjs",
+    "data:geocode-parcel": "node scripts/geocode-parcel.mjs",
+    "data:enrich-zone": "node scripts/enrich-zone.mjs",
+    "data:build-zone-lookup": "node --max-old-space-size=4096 scripts/build-zone-lookup.mjs",
+    "data:enrich-road": "node scripts/enrich-road.mjs",
+    "data:download-tax": "node scripts/download-tax.mjs",
+    "data:enrich-business": "node scripts/enrich-business.mjs",
+    "data:fetch-presale": "node scripts/fetch-presale.mjs",
+    "data:build-presale-actual": "node scripts/build-presale-actual.mjs",
+    "data:all": "npm run data:download && npm run data:normalize && npm run data:geocode && npm run data:geocode-parcel && npm run data:enrich-zone && npm run data:build-zone-lookup && npm run data:enrich-road && npm run data:download-tax && npm run data:enrich-business && npm run data:build-ui"
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "next": "16.2.9",
+    "proj4": "^2.20.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-leaflet": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@turf/boolean-point-in-polygon": "^7.3.5",
+    "@turf/helpers": "^7.3.5",
+    "@types/leaflet.markercluster": "^1.5.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "adm-zip": "^0.5.18",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "fast-xml-parser": "^5.9.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
