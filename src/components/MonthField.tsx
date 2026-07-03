@@ -28,16 +28,16 @@ export default function MonthField({ value, min, max, placeholder, onChange }: P
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full border rounded px-2 py-1 text-sm text-left flex justify-between items-center"
+        className="w-full border border-slate-300 rounded-lg px-2 py-1 text-sm text-left bg-white flex justify-between items-center"
       >
-        <span className={value ? "" : "text-gray-400"}>
+        <span className={value ? "" : "text-slate-400"}>
           {value ? value.replace("-", "/") : placeholder}
         </span>
-        <span className="text-gray-400 text-xs">▾</span>
+        <span className="text-slate-400 text-xs">▾</span>
       </button>
 
       {open && (
-        <div className="mt-1 border rounded bg-white shadow-sm p-2">
+        <div className="mt-1 border border-slate-200 rounded-lg bg-white shadow-sm p-2">
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"

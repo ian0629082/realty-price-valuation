@@ -25,36 +25,40 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const VIEW_MODES: { key: ViewMode; label: string }[] = [
-  { key: "store-sale", label: "店面買賣成交" },
-  { key: "resi-sale", label: "住宅買賣成交" },
-  { key: "store-rent", label: "店面租賃成交" },
-  { key: "resi-rent", label: "住宅租賃成交" },
-  { key: "land-sale", label: "土地買賣成交" },
-  { key: "cap-rate", label: "買賣投報率" },
-  { key: "presale", label: "預售屋" },
-  { key: "land-eval", label: "土地評估" },
+const VIEW_MODES: { key: ViewMode; label: string; icon: string }[] = [
+  { key: "store-sale", label: "店面買賣成交", icon: "🏬" },
+  { key: "resi-sale", label: "住宅買賣成交", icon: "🏠" },
+  { key: "store-rent", label: "店面租賃成交", icon: "🗝️" },
+  { key: "resi-rent", label: "住宅租賃成交", icon: "🔑" },
+  { key: "land-sale", label: "土地買賣成交", icon: "🏞️" },
+  { key: "cap-rate", label: "買賣投報率", icon: "📈" },
+  { key: "presale", label: "預售屋", icon: "🏗️" },
+  { key: "land-eval", label: "土地評估", icon: "🧮" },
 ];
+
+const SELECT_CLS =
+  "w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-sm bg-white";
 
 export default function FilterPanel({ cities, districts, filters, onChange, locator, children }: Props) {
   return (
-    <div className="w-64 shrink-0 bg-white border-r p-4 space-y-5 overflow-y-auto">
-      <h2 className="font-bold text-lg">篩選條件</h2>
+    <div className="w-64 shrink-0 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto">
+      <h2 className="font-bold text-lg text-slate-900">篩選條件</h2>
 
       {/* 檢視模式 */}
-      <div>
-        <label className="block text-sm font-medium mb-2">檢視模式</label>
+      <div className="bg-slate-50 rounded-xl p-3">
+        <label className="block text-xs font-medium text-slate-500 mb-2">檢視模式</label>
         <div className="flex flex-col gap-1">
-          {VIEW_MODES.map(({ key, label }) => (
+          {VIEW_MODES.map(({ key, label, icon }) => (
             <button
               key={key}
               onClick={() => onChange({ ...filters, viewMode: key })}
-              className={`w-full text-left px-3 py-2 rounded text-sm font-medium border transition-colors ${
+              className={`w-full flex items-center gap-2 text-left px-2.5 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 filters.viewMode === key
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
               }`}
             >
+              <span className="text-base leading-none">{icon}</span>
               {label}
             </button>
           ))}
@@ -64,49 +68,50 @@ export default function FilterPanel({ cities, districts, filters, onChange, loca
       {/* 地號定位 */}
       {locator}
 
-      {/* 縣市 */}
-      <div>
-        <label className="block text-sm font-medium mb-1">縣市</label>
-        <select
-          className="w-full border rounded px-2 py-1 text-sm"
-          value={filters.city}
-          onChange={(e) => onChange({ ...filters, city: e.target.value, district: "全部" })}
-        >
-          <option value="全部">全部</option>
-          {cities.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
+      {/* 縣市／區域 */}
+      <div className="bg-slate-50 rounded-xl p-3 space-y-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">縣市</label>
+          <select
+            className={SELECT_CLS}
+            value={filters.city}
+            onChange={(e) => onChange({ ...filters, city: e.target.value, district: "全部" })}
+          >
+            <option value="全部">全部</option>
+            {cities.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
 
-      {/* 區域 */}
-      <div>
-        <label className="block text-sm font-medium mb-1">區域</label>
-        <select
-          className="w-full border rounded px-2 py-1 text-sm"
-          value={filters.district}
-          onChange={(e) => onChange({ ...filters, district: e.target.value })}
-        >
-          <option value="全部">全部</option>
-          {districts.map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">區域</label>
+          <select
+            className={SELECT_CLS}
+            value={filters.district}
+            onChange={(e) => onChange({ ...filters, district: e.target.value })}
+          >
+            <option value="全部">全部</option>
+            {districts.map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* 圖例 */}
-      <div className="pt-2 border-t">
-        <p className="text-xs font-medium text-gray-600 mb-2">點位著色</p>
-        <div className="flex h-3 rounded overflow-hidden">
+      <div className="bg-slate-50 rounded-xl p-3">
+        <p className="text-xs font-medium text-slate-500 mb-2">點位著色</p>
+        <div className="flex h-3 rounded-full overflow-hidden">
           {["#16a34a", "#84cc16", "#eab308", "#f97316", "#dc2626"].map((c) => (
             <span key={c} className="flex-1" style={{ backgroundColor: c }} />
           ))}
         </div>
-        <div className="flex justify-between text-[10px] text-gray-500 mt-0.5">
+        <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
           <span>{filters.viewMode === "cap-rate" ? "高投報" : "便宜"}</span>
           <span>{filters.viewMode === "cap-rate" ? "低投報" : "貴"}</span>
         </div>
-        <p className="text-[10px] text-gray-400 mt-1">
+        <p className="text-[10px] text-slate-400 mt-1">
           依當前檢視的行情指標分位著色，詳見地圖左下角總覽。
         </p>
       </div>

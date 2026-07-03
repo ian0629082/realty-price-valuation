@@ -46,13 +46,13 @@ function NumberRange({
     v.trim() === "" ? null : Number(v);
 
   const inputCls =
-    "w-full border rounded px-2 py-1 text-sm text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+    "w-full border border-slate-300 rounded-lg px-2 py-1 text-sm text-right bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
   return (
     <div>
-      <label className="block text-sm font-medium mb-1">
+      <label className="block text-xs font-medium text-slate-500 mb-1">
         {label}
-        <span className="ml-1 text-xs text-gray-400 font-normal">（{unit}）</span>
+        <span className="ml-1 text-slate-400 font-normal">（{unit}）</span>
       </label>
       <div className="flex items-center gap-1">
         <input
@@ -62,7 +62,7 @@ function NumberRange({
           value={valueMin ?? ""}
           onChange={(e) => onChange(parse(e.target.value), valueMax)}
         />
-        <span className="text-gray-400 shrink-0">~</span>
+        <span className="text-slate-400 shrink-0">~</span>
         <input
           type="number"
           className={inputCls}
@@ -94,9 +94,9 @@ export default function MarketFilters({
     filters.areaMax != null;
 
   return (
-    <div className="pt-2 border-t space-y-3">
+    <div className="bg-slate-50 rounded-xl p-3 space-y-3">
       <div className="flex justify-between items-center">
-        <p className="text-sm font-medium">交易條件篩選</p>
+        <p className="text-xs font-medium text-slate-500">交易條件篩選</p>
         {active && (
           <button onClick={onReset} className="text-xs text-blue-600 hover:underline">
             重置
@@ -107,7 +107,7 @@ export default function MarketFilters({
       {/* 交易時間：自製月份選擇器（起～迄），限制在資料實際期間內，留空＝不限 */}
       {months.length > 1 && (
         <div>
-          <label className="block text-sm font-medium mb-1">交易時間</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">交易時間</label>
           <div className="space-y-1.5">
             <MonthField
               value={filters.dateFrom}
