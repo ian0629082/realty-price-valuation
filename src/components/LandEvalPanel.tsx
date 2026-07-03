@@ -13,12 +13,23 @@ interface Props {
   onClear: () => void; // 清除定位
   pickedZone?: {
     far: number | null;
+    farEstimated?: boolean;
     useZone: string | null;
     lat: number;
     lng: number;
     nonce: number;
   } | null; // 右鍵反查分區，帶入容積率＋座標
   presale?: Property[]; // 全區預售建案，供 3km 售價比較
+}
+
+// 「住宅區」「商業區」（無編號舊制分區）容積率推估說明：都市計畫細部計畫依臨路寬度分級，
+// 圖資僅收未達 15 公尺道路之低級距，臨路 15 公尺以上且基地縱深 30 公尺內者容積率較高，僅供參考。
+function EstimatedFarNote() {
+  return (
+    <p className="mt-0.5 text-[11px] text-amber-600">
+      依都市計畫細部計畫臨路寬度推估之下限值（適用未達15公尺道路）；若臨路15公尺以上且基地縱深30公尺內，容積率可能較高（住宅區240%／商業區480%），正確數值請以地政機關核發資料為準
+    </p>
+  );
 }
 
 // 土地評估試算：浮在地圖上的面板（檢視模式＝土地評估時顯示），可收合以免遮擋地圖。
@@ -37,11 +48,12 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
   }, [located]);
 
   // 右鍵反查分區時，帶入容積率（nonce 變動即觸發；坪數需另行輸入或由地號定位取得）
+  // 若已有地號定位結果，右鍵點擊其他空白處不應覆蓋容積率，須先「清除定位」才能改用右鍵反查
   useEffect(() => {
-    if (pickedZone && pickedZone.far != null) {
+    if (!located && pickedZone && pickedZone.far != null) {
       setZoneFAR(String(pickedZone.far));
     }
-  }, [pickedZone]);
+  }, [pickedZone, located]);
 
   // 驗證＋計算：三個欄位皆須為 > 0 的數字（允許小數）
   const { result, error } = useMemo(() => {
@@ -81,8 +93,11 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
     [refPoint, presale]
   );
 
+  // 臨路寬（僅地號定位提供，右鍵反查不含此資訊）：僅供參考，不影響試算公式
+  const roadInfo = located;
+
   return (
-    <div className="absolute top-4 left-14 w-72 bg-white shadow-lg rounded-lg z-[1000] max-h-[calc(100vh-2rem)] overflow-y-auto">
+    <div className="absolute top-4 left-14 w-72 bg-white shadow-lg rounded-xl border border-slate-200 z-[1000] max-h-[calc(100vh-2rem)] overflow-y-auto">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex justify-between items-center px-3 py-2 border-b text-left"
@@ -94,6 +109,20 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
       {open && (
         <div className="p-3">
           <ParcelLocator onLocate={onLocate} onClear={onClear} hasResult={!!located} />
+
+          {roadInfo && (
+            <p className="mt-2 text-[11px] text-gray-500">
+              {roadInfo.roadWidth != null ? (
+                <>
+                  臨路寬：{roadInfo.roadWidth}m
+                  {roadInfo.roadName ? `（${roadInfo.roadName}）` : ""}
+                  {roadInfo.hasMedian ? "，有分隔島" : ""} — 僅供參考，本次試算無參考路寬
+                </>
+              ) : (
+                "臨路寬：查無資料"
+              )}
+            </p>
+          )}
 
           <div className="space-y-2 pt-3 mt-3 border-t">
             <div>
@@ -135,9 +164,13 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
                 onChange={(e) => setZoneFAR(e.target.value)}
               />
               {located && located.zoneFAR != null && (
-                <p className="mt-0.5 text-[11px] text-emerald-700">
-                  已依地號帶入{located.useZone ? `「${located.useZone}」` : ""}容積率 {located.zoneFAR}%
-                </p>
+                <>
+                  <p className="mt-0.5 text-[11px] text-emerald-700">
+                    已依地號帶入{located.useZone ? `「${located.useZone}」` : ""}容積率 {located.zoneFAR}%
+                    {located.zoneFAREstimated ? "（推估值）" : ""}
+                  </p>
+                  {located.zoneFAREstimated && <EstimatedFarNote />}
+                </>
               )}
               {located && located.zoneFAR == null && (
                 <p className="mt-0.5 text-[11px] text-amber-600">
@@ -145,9 +178,13 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
                 </p>
               )}
               {!located && pickedZone && pickedZone.far != null && (
-                <p className="mt-0.5 text-[11px] text-emerald-700">
-                  已帶入右鍵所選{pickedZone.useZone ? `「${pickedZone.useZone}」` : ""}容積率 {pickedZone.far}%
-                </p>
+                <>
+                  <p className="mt-0.5 text-[11px] text-emerald-700">
+                    已帶入右鍵所選{pickedZone.useZone ? `「${pickedZone.useZone}」` : ""}容積率 {pickedZone.far}%
+                    {pickedZone.farEstimated ? "（推估值）" : ""}
+                  </p>
+                  {pickedZone.farEstimated && <EstimatedFarNote />}
+                </>
               )}
               {!located && pickedZone && pickedZone.far == null && (
                 <p className="mt-0.5 text-[11px] text-amber-600">

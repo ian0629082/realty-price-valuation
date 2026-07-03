@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 import { zoneAt } from "@/lib/zoneLookup";
+import { roadWidthAt } from "@/lib/roadLookup";
 
 // 地段代碼對照（scripts/geocode-parcel.mjs 產出）：段名 -> [{ town, sectcode, office }]
 type SectionMap = Record<string, { town: string; sectcode: string; office: string }[]>;
@@ -77,6 +78,7 @@ export async function GET(req: NextRequest) {
   const latNum = Number(lat);
   const lngNum = Number(lng);
   const zone = zoneAt(latNum, lngNum); // 該地號座標所在分區（含容積率）
+  const road = roadWidthAt(latNum, lngNum); // 最近道路臨路寬（僅供參考，不影響試算）
 
   return NextResponse.json({
     lat: latNum,
@@ -86,5 +88,9 @@ export async function GET(req: NextRequest) {
     useZone: zone?.useZone ?? null,
     zoneFAR: zone?.zoneFAR ?? null,
     zoneCoverage: zone?.zoneCoverage ?? null,
+    zoneFAREstimated: zone?.zoneFAREstimated ?? false,
+    roadWidth: road?.roadWidth ?? null,
+    roadName: road?.roadName ?? null,
+    hasMedian: road?.hasMedian ?? false,
   });
 }

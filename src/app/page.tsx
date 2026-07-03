@@ -42,6 +42,7 @@ export default function Home() {
   // 右鍵反查的分區容積率（帶入試算）；nonce 讓重複點同一區也會觸發
   const [pickedZone, setPickedZone] = useState<{
     far: number | null;
+    farEstimated?: boolean;
     useZone: string | null;
     lat: number;
     lng: number;
@@ -159,6 +160,7 @@ export default function Home() {
               ? (z) =>
                   setPickedZone({
                     far: z.zoneFAR,
+                    farEstimated: z.zoneFAREstimated,
                     useZone: z.useZone,
                     lat: z.lat,
                     lng: z.lng,

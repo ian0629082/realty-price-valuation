@@ -9,7 +9,11 @@ export interface LocatedParcel {
   label: string;
   useZone?: string | null; // 該地號座標所在使用分區
   zoneFAR?: number | null; // 容積率（%，300 代表 300%），供土地評估試算自動帶入
+  zoneFAREstimated?: boolean; // true：容積率非圖資原值，依「住宅區/商業區」臨路寬度預設低級距推估，僅供參考
   zoneCoverage?: number | null; // 建蔽率（%）
+  roadWidth?: number | null; // 臨路寬（公尺，最近道路段推估，僅供參考，不影響試算）
+  roadName?: string | null; // 最近道路名稱
+  hasMedian?: boolean; // 該道路是否推估有分隔島
 }
 
 interface Props {

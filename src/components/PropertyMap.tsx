@@ -33,6 +33,7 @@ export interface PickedZone {
   lng: number;
   useZone: string | null;
   zoneFAR: number | null;
+  zoneFAREstimated?: boolean; // true：容積率非圖資原值，依「住宅區/商業區」臨路寬度預設低級距推估，僅供參考
   zoneCoverage: number | null;
 }
 
@@ -213,7 +214,9 @@ function ZoneRightClick({ onPickZone }: { onPickZone: (zone: PickedZone) => void
           const detail = parts.length ? `${parts.join("｜")}<br/>` : "";
           const note =
             z.zoneFAR != null
-              ? '<span style="color:#059669">已帶入試算容積率</span>'
+              ? z.zoneFAREstimated
+                ? '<span style="color:#d97706">推估值（未達15公尺道路級距），已帶入試算</span>'
+                : '<span style="color:#059669">已帶入試算容積率</span>'
               : '<span style="color:#d97706">此分區無容積率資料</span>';
           popup.setContent(
             `<div style="font-size:13px;line-height:1.5">

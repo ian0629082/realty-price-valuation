@@ -13,5 +13,6 @@ export async function GET(req: NextRequest) {
     useZone: zone?.useZone ?? null,
     zoneFAR: zone?.zoneFAR ?? null,
     zoneCoverage: zone?.zoneCoverage ?? null,
+    zoneFAREstimated: zone?.zoneFAREstimated ?? false,
   });
 }

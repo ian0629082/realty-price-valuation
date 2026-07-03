@@ -10,6 +10,15 @@ interface ZonePolygon {
   r: [number, number][];
 }
 
+// 「住宅區」「商業區」（無編號舊制分區）容積率依臨路寬度分級，KML 圖資本身未收錄單一數字。
+// 依台中市都發局《變更臺中市大里地區都市計畫細部計畫（土地使用分區管制要點）》，
+// 未達 15 公尺計畫道路取低級距（住宅 180% / 商業 320%），以此作為預設推估值；
+// 臨接 15 公尺以上計畫道路且基地縱深 30 公尺內者容積率較高（住宅 240% / 商業 480%），僅供參考。
+const DEFAULT_FAR: Record<string, number> = {
+  住宅區: 180,
+  商業區: 320,
+};
+
 let cache: (ZonePolygon & { bbox: [number, number, number, number] })[] | null = null;
 
 function load() {
@@ -43,13 +52,21 @@ function pointInRing(lng: number, lat: number, ring: [number, number][]): boolea
   return inside;
 }
 
-// 找出座標所在分區：回傳 { useZone, zoneFAR, zoneCoverage } 或 null
+// 找出座標所在分區：回傳 { useZone, zoneFAR, zoneCoverage, zoneFAREstimated } 或 null
+// zoneFAREstimated：容積率非圖資原值，而是依「住宅區/商業區」預設低級距推估（見 DEFAULT_FAR 說明）
 export function zoneAt(lat: number, lng: number) {
   for (const zp of load()) {
     const [minX, minY, maxX, maxY] = zp.bbox;
     if (lng < minX || lng > maxX || lat < minY || lat > maxY) continue;
     if (pointInRing(lng, lat, zp.r)) {
-      return { useZone: zp.z, zoneFAR: zp.f, zoneCoverage: zp.c };
+      if (zp.f != null) {
+        return { useZone: zp.z, zoneFAR: zp.f, zoneCoverage: zp.c, zoneFAREstimated: false };
+      }
+      const fallback = DEFAULT_FAR[zp.z];
+      if (fallback != null) {
+        return { useZone: zp.z, zoneFAR: fallback, zoneCoverage: zp.c, zoneFAREstimated: true };
+      }
+      return { useZone: zp.z, zoneFAR: null, zoneCoverage: zp.c, zoneFAREstimated: false };
     }
   }
   return null;

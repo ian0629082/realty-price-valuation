@@ -19,6 +19,7 @@
     "data:enrich-business": "node scripts/enrich-business.mjs",
     "data:fetch-presale": "node scripts/fetch-presale.mjs",
     "data:build-presale-actual": "node scripts/build-presale-actual.mjs",
+    "data:build-road-lookup": "node scripts/build-road-lookup.mjs",
     "data:all": "npm run data:download && npm run data:normalize && npm run data:geocode && npm run data:geocode-parcel && npm run data:enrich-zone && npm run data:build-zone-lookup && npm run data:enrich-road && npm run data:download-tax && npm run data:enrich-business && npm run data:build-ui"
   },
   "dependencies": {
