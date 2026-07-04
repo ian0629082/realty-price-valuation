@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "店面土地行情地圖",
+  title: "行情與土地評估",
   description: "店面/土地行情查詢地圖",
 };
 
