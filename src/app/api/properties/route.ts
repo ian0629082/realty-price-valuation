@@ -25,7 +25,7 @@ type ActualMap = Record<string, { name: string; avgUnitPrice: number; count: num
 let actualCache: { map: ActualMap; keys: string[] } | null = null;
 function loadActual() {
   if (actualCache) return actualCache;
-  const filePath = path.join(process.cwd(), "data", "presale-actual.json");
+  const filePath = path.join(process.cwd(), "src", "data", "presale-actual.json");
   const map = fs.existsSync(filePath)
     ? (JSON.parse(fs.readFileSync(filePath, "utf-8")) as ActualMap)
     : {};
@@ -57,7 +57,7 @@ function matchActual(buildName: string): { avgUnitPrice: number; count: number }
 
 // 將 591 建案記錄轉為地圖可用的 Property（type 為「預售屋」）
 function loadPresale(): Property[] {
-  const filePath = path.join(process.cwd(), "data", "presale.json");
+  const filePath = path.join(process.cwd(), "src", "data", "presale.json");
   if (!fs.existsSync(filePath)) return [];
   const records = JSON.parse(fs.readFileSync(filePath, "utf-8")) as PresaleRecord[];
   return records

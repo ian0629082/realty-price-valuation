@@ -6,7 +6,8 @@
  * 國土測繪中心（NLSC）地籍 API，將「地段+地號」轉為 WGS84 經緯度。
  *
  * 資料流程：
- *   1. 建立地段代碼對照（data/land-sections.json）
+ *   1. 建立地段代碼對照（src/data/land-sections.json，直接輸出至會進版控、
+ *      隨部署上線的路徑，供 /api/locate-parcel 執行期讀取）
  *      GET https://api.nlsc.gov.tw/other/ListLandSection/B/{towncode}
  *      → sectstr(段名) 對應 {sectcode, office, town}；跨區同名時優先南區/大里
  *   2. 逐筆解析地號 → 8 碼地號（母號4+子號4）
@@ -22,7 +23,7 @@ import fs from "node:fs";
 import { OUTPUT_FILE } from "./config.mjs";
 
 const CACHE_FILE = "data/geocode-cache.json";
-const SECTION_FILE = "data/land-sections.json";
+const SECTION_FILE = "src/data/land-sections.json";
 const COUNTY = "B"; // 臺中市
 const TARGET_TOWNS = ["B03", "B28", "B07"]; // 南區、大里區、南屯區（跨區同名段優先此三區）
 const DELAY_MS = 150;

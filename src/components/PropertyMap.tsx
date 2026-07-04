@@ -21,6 +21,7 @@ interface Props {
   onSelect: (property: Property) => void;
   colorFor: (property: Property) => string;
   onBoundsChange?: (bounds: MapBounds) => void;
+  focusBounds?: (MapBounds & { nonce: number }) | null; // 切換縣市／區域時，地圖飛到該範圍
   located?: LocatedParcel | null;
   showCadastral?: boolean; // 疊加地籍圖底圖（土地評估模式）
   onPickZone?: (zone: PickedZone) => void; // 右鍵任一點反查分區，帶入試算容積率
@@ -190,6 +191,23 @@ function BoundsWatcher({ onBoundsChange }: { onBoundsChange: (b: MapBounds) => v
   return null;
 }
 
+// 切換縣市／區域時，地圖飛到該範圍（單點資料則以合理縮放層級置中）
+function FocusBoundsFlyTo({ focus }: { focus: (MapBounds & { nonce: number }) | null | undefined }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!focus) return;
+    map.flyToBounds(
+      [
+        [focus.south, focus.west],
+        [focus.north, focus.east],
+      ],
+      { padding: [40, 40], maxZoom: 16, duration: 0.8 }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus?.nonce]);
+  return null;
+}
+
 // 右鍵：對點擊處任一點反查都市計畫分區＋容積率，彈出資訊並帶入試算器
 function ZoneRightClick({ onPickZone }: { onPickZone: (zone: PickedZone) => void }) {
   const onPickRef = useRef(onPickZone);
@@ -241,6 +259,7 @@ export default function PropertyMap({
   onSelect,
   colorFor,
   onBoundsChange,
+  focusBounds,
   located,
   showCadastral,
   onPickZone,
@@ -266,6 +285,7 @@ export default function PropertyMap({
       )}
       <ClusterLayer properties={properties} onSelect={onSelect} colorFor={colorFor} />
       {onBoundsChange && <BoundsWatcher onBoundsChange={onBoundsChange} />}
+      <FocusBoundsFlyTo focus={focusBounds} />
       {onPickZone && <ZoneRightClick onPickZone={onPickZone} />}
       {presale && presale.length > 0 && <PresaleLayer presale={presale} onSelect={onSelect} />}
       <LocatedPinLayer located={located} />

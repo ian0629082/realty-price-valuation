@@ -23,6 +23,8 @@ interface Props {
   onChange: (filters: Filters) => void;
   locator?: React.ReactNode; // 地號定位（顯示於檢視模式與縣市之間）
   children?: React.ReactNode;
+  mobileOpen?: boolean; // 手機版：是否展開為滑入式抽屜
+  onMobileClose?: () => void;
 }
 
 const VIEW_MODES: { key: ViewMode; label: string; icon: string }[] = [
@@ -39,10 +41,39 @@ const VIEW_MODES: { key: ViewMode; label: string; icon: string }[] = [
 const SELECT_CLS =
   "w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-sm bg-white";
 
-export default function FilterPanel({ cities, districts, filters, onChange, locator, children }: Props) {
+export default function FilterPanel({
+  cities,
+  districts,
+  filters,
+  onChange,
+  locator,
+  children,
+  mobileOpen,
+  onMobileClose,
+}: Props) {
   return (
-    <div className="w-64 shrink-0 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto">
-      <h2 className="font-bold text-lg text-slate-900">篩選條件</h2>
+    <>
+      {/* 手機版遮罩：點擊收合抽屜 */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-[1001] sm:hidden"
+          onClick={onMobileClose}
+        />
+      )}
+      <div
+        className={`fixed sm:static inset-y-0 left-0 z-[1002] sm:z-auto w-72 max-w-[85vw] sm:w-64 sm:max-w-none shrink-0 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto transition-transform duration-200 sm:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-lg text-slate-900">篩選條件</h2>
+          <button
+            onClick={onMobileClose}
+            className="sm:hidden text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"
+          >
+            ✕
+          </button>
+        </div>
 
       {/* 檢視模式 */}
       <div className="bg-slate-50 rounded-xl p-3">
@@ -116,7 +147,8 @@ export default function FilterPanel({ cities, districts, filters, onChange, loca
         </p>
       </div>
 
-      {children}
-    </div>
+        {children}
+      </div>
+    </>
   );
 }

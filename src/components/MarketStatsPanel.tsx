@@ -16,6 +16,7 @@ interface Props {
   scale: MetricScale; // 與地圖點位一致的色階（依整區計算，拖動時不跳動）
   districtStats: DistrictStat[];
   alignRight?: boolean; // 靠右下角顯示（土地評估模式，避免與左上試算面板重疊）
+  hideOnMobile?: boolean; // 手機版：試算全螢幕分頁開啟時隱藏，避免與試算面板疊在一起
 }
 
 // 依色階分級找出數值對應顏色（與地圖點位著色同一套 breaks/colors，供區域比較長條使用）
@@ -33,6 +34,7 @@ export default function MarketStatsPanel({
   scale,
   districtStats,
   alignRight,
+  hideOnMobile,
 }: Props) {
   const summary = summarize(visible, viewMode);
   const kind = scale.kind;
@@ -41,7 +43,9 @@ export default function MarketStatsPanel({
 
   return (
     <div
-      className={`absolute bottom-4 ${alignRight ? "right-4" : "left-4"} z-[1000] bg-white/95 shadow-lg rounded-xl border border-slate-200 p-3.5 w-64`}
+      className={`${hideOnMobile ? "hidden sm:block" : ""} absolute bottom-4 left-4 right-4 sm:right-auto sm:w-64 ${
+        alignRight ? "sm:left-auto sm:right-4" : "sm:left-4"
+      } z-[1000] bg-white/95 shadow-lg rounded-xl border border-slate-200 p-3.5`}
     >
       <div className="flex items-baseline justify-between">
         <h3 className="font-bold text-sm text-slate-900">{label}總覽</h3>

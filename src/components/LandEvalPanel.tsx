@@ -20,6 +20,8 @@ interface Props {
     nonce: number;
   } | null; // 右鍵反查分區，帶入容積率＋座標
   presale?: Property[]; // 全區預售建案，供 3km 售價比較
+  mobileFullScreen?: boolean; // 手機版：以全螢幕分頁取代浮動卡片（見「地圖／試算」切換）
+  onMobileBack?: () => void; // 手機版：從試算全螢幕返回地圖
 }
 
 // 「住宅區」「商業區」（無編號舊制分區）容積率推估說明：都市計畫細部計畫依臨路寬度分級，
@@ -34,7 +36,15 @@ function EstimatedFarNote() {
 
 // 土地評估試算：浮在地圖上的面板（檢視模式＝土地評估時顯示），可收合以免遮擋地圖。
 // 內含「地號定位」與價格試算；容積率沿用既有 zoneFAR 欄位語意（原始數值，300 代表 300%）。
-export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, presale }: Props) {
+export default function LandEvalPanel({
+  located,
+  onLocate,
+  onClear,
+  pickedZone,
+  presale,
+  mobileFullScreen,
+  onMobileBack,
+}: Props) {
   const [open, setOpen] = useState(true);
   const [landArea, setLandArea] = useState(""); // 土地坪數
   const [landPrice, setLandPrice] = useState(""); // 土地買價（萬 / 坪）
@@ -97,14 +107,28 @@ export default function LandEvalPanel({ located, onLocate, onClear, pickedZone, 
   const roadInfo = located;
 
   return (
-    <div className="absolute top-4 left-14 w-72 bg-white shadow-lg rounded-xl border border-slate-200 z-[1000] max-h-[calc(100vh-2rem)] overflow-y-auto">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex justify-between items-center px-3 py-2 border-b text-left"
-      >
-        <span className="font-bold text-sm">土地評估試算</span>
-        <span className="text-gray-500 text-xs">{open ? "收合 ▾" : "展開 ▸"}</span>
-      </button>
+    <div
+      className={`${
+        mobileFullScreen ? "fixed inset-0 z-[1002]" : "hidden"
+      } sm:block sm:absolute sm:inset-auto sm:z-[1000] sm:top-4 sm:left-14 sm:w-72 bg-white shadow-lg sm:rounded-xl border border-slate-200 max-h-full sm:max-h-[calc(100vh-2rem)] overflow-y-auto`}
+    >
+      <div className="flex items-center border-b">
+        {mobileFullScreen && (
+          <button
+            onClick={onMobileBack}
+            className="sm:hidden shrink-0 px-3 py-2 text-slate-600 text-sm"
+          >
+            ← 地圖
+          </button>
+        )}
+        <button
+          onClick={() => setOpen((o) => !o)}
+          className="flex-1 flex justify-between items-center px-3 py-2 text-left"
+        >
+          <span className="font-bold text-sm">土地評估試算</span>
+          <span className="text-gray-500 text-xs">{open ? "收合 ▾" : "展開 ▸"}</span>
+        </button>
+      </div>
 
       {open && (
         <div className="p-3">

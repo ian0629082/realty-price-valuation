@@ -13,7 +13,7 @@ const COUNTY = "B"; // 臺中市
 let sectionMapCache: SectionMap | null = null;
 function loadSectionMap(): SectionMap {
   if (sectionMapCache) return sectionMapCache;
-  const filePath = path.join(process.cwd(), "data", "land-sections.json");
+  const filePath = path.join(process.cwd(), "src", "data", "land-sections.json");
   sectionMapCache = JSON.parse(fs.readFileSync(filePath, "utf-8")) as SectionMap;
   return sectionMapCache;
 }

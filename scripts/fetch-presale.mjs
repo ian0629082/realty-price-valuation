@@ -5,7 +5,8 @@
  *   列表：https://bff-newhouse.591.com.tw/v1/list?regionid=8&sectionid={區}
  *   詳情：https://bff-newhouse.591.com.tw/v1/detail/base-info?id={hid}（含座標）
  *
- * build_type=1 為「預售屋」。輸出結構化建案清單至 data/presale.json。
+ * build_type=1 為「預售屋」。輸出結構化建案清單至 src/data/presale.json
+ * （直接輸出至 src/data 而非 data/：該路徑會進版控並隨部署上線，供執行期讀取）。
  *
  * 用法：node scripts/fetch-presale.mjs [每區最多筆數]
  *   （不帶參數＝全部；先抓一筆測試可用 `node scripts/fetch-presale.mjs 1`）
@@ -16,7 +17,7 @@ import fs from "node:fs";
 const REGION_ID = 8; // 台中市
 // 與 app 涵蓋範圍一致（591 台中 sectionid）：南區=100、大里區=107、南屯區=105
 const SECTIONS = { 南區: 100, 大里區: 107, 南屯區: 105 };
-const OUTPUT_FILE = "data/presale.json";
+const OUTPUT_FILE = "src/data/presale.json";
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";

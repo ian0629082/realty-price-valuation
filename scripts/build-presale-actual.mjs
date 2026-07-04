@@ -5,12 +5,13 @@ import AdmZip from "adm-zip";
 import { CITY_FILE_PREFIX, TARGET_DISTRICTS, RAW_DIR } from "./config.mjs";
 
 // 由實價登錄「預售屋買賣」(b_lvr_land_b.csv) 依建案名稱彙整實際成交均價。
-// 輸出 data/presale-actual.json：normalizedName -> { name, avgUnitPrice(萬/坪), count }
+// 輸出 src/data/presale-actual.json：normalizedName -> { name, avgUnitPrice(萬/坪), count }
 // 供 API 以 591 建案名對應，於資料卡「推估單價」下方顯示實價登錄成交均價。
+// 直接輸出至 src/data（而非 data/）：該路徑會進版控並隨部署上線，供執行期讀取。
 
 const SQM_PER_PING = 3.30579; // 1 坪 = 3.30579 m²
 const B_FILE = `${CITY_FILE_PREFIX}_lvr_land_b.csv`;
-const OUT_FILE = "data/presale-actual.json";
+const OUT_FILE = "src/data/presale-actual.json";
 
 // 建案名稱正規化：全形轉半形、去空白與常見分隔符，供 591／實價登錄配對
 export function normalizeName(raw) {

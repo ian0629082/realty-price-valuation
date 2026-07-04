@@ -27,7 +27,7 @@ export default function DetailCard({ property, onClose }: Props) {
   const ps = property.presale;
   if (ps) {
     return (
-      <div className="absolute top-4 right-4 w-80 bg-white shadow-lg rounded-xl border border-slate-200 p-4 z-[1000] max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-x-0 bottom-0 sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-4 sm:right-4 w-full sm:w-80 bg-white shadow-lg rounded-t-2xl sm:rounded-xl border border-slate-200 p-4 z-[1002] sm:z-[1000] max-h-[75vh] sm:max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-start">
           <h3 className="font-bold text-lg text-slate-900">{ps.buildName}</h3>
           <button
@@ -102,7 +102,7 @@ export default function DetailCard({ property, onClose }: Props) {
   }
 
   return (
-    <div className="absolute top-4 right-4 w-80 bg-white shadow-lg rounded-xl border border-slate-200 p-4 z-[1000] max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-x-0 bottom-0 sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-4 sm:right-4 w-full sm:w-80 bg-white shadow-lg rounded-t-2xl sm:rounded-xl border border-slate-200 p-4 z-[1002] sm:z-[1000] max-h-[75vh] sm:max-h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-start">
         <h3 className="font-bold text-lg text-slate-900">{property.address}</h3>
         <button
