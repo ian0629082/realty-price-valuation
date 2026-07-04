@@ -42,3 +42,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 本機保留、不上傳：AI 開發需求規格草稿與代理工具指示檔
+land_price_evaluation.md
+AGENTS.md
+CLAUDE.md
+.claude/
