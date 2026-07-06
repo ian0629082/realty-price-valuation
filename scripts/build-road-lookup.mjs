@@ -41,8 +41,11 @@ async function main() {
     const x1 = parseFloat(c[10]), y1 = parseFloat(c[11]);
     const x2 = parseFloat(c[12]), y2 = parseFloat(c[13]);
     if (!(width > 0) || [x1, y1, x2, y2].some(Number.isNaN)) continue;
+    // 路名需併入巷/弄，否則巷弄側支（通常較窄）會被誤標成主線路名，
+    // 使查詢點落在巷口時顯示「主線路名＋巷弄窄路寬」而誤以為主線路寬算錯
+    const lane = (c[4] || "") + (c[5] || "");
     out.push({
-      n: c[2] || "",
+      n: (c[2] || "") + lane,
       w: Math.round(width * 10) / 10,
       x1: Math.round(x1 * 100) / 100,
       y1: Math.round(y1 * 100) / 100,

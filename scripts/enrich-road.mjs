@@ -68,7 +68,10 @@ async function main() {
     const x2 = parseFloat(c[12]), y2 = parseFloat(c[13]);
     if (!(width > 0) || Number.isNaN(x1) || Number.isNaN(y1) || Number.isNaN(x2) || Number.isNaN(y2))
       continue;
-    segs.push({ name: c[2] || "", width, x1, y1, x2, y2 });
+    // 路名需併入巷/弄，否則巷弄側支（通常較窄）會被誤標成主線路名，
+    // 使查詢點落在巷口時顯示「主線路名＋巷弄窄路寬」而誤以為主線路寬算錯
+    const lane = (c[4] || "") + (c[5] || "");
+    segs.push({ name: (c[2] || "") + lane, width, x1, y1, x2, y2 });
   }
   console.log(`道路段（${TARGET_DISTRICTS.join("/")}）：${segs.length}`);
 
