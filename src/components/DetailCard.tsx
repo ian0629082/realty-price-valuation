@@ -113,6 +113,12 @@ export default function DetailCard({ property, onClose }: Props) {
         </button>
       </div>
 
+      {property.sale?.isSpecialTransaction && (
+        <p className="mt-1.5 text-xs text-purple-700 bg-purple-50 border border-purple-200 rounded-lg px-2 py-1">
+          此筆交易政府備註為親友／持分／畸零地等特殊關係交易，價格可能不反映市場行情，僅供參考。
+        </p>
+      )}
+
       {/* 核心數字：成交單價／投報率，放大當視覺焦點 */}
       {(unitPrice !== null || capRate !== null) && (
         <div className="mt-2 bg-slate-50 rounded-lg p-2.5 flex gap-4">

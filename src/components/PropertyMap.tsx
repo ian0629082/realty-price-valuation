@@ -26,6 +26,7 @@ interface Props {
   showCadastral?: boolean; // 疊加地籍圖底圖（土地評估模式）
   onPickZone?: (zone: PickedZone) => void; // 右鍵任一點反查分區，帶入試算容積率
   presale?: Property[]; // 預售建案疊層（土地評估模式，大樓圖示，供 3km 售價比較）
+  compareCircle?: { lat: number; lng: number; km: number } | null; // 試算結果出現時，附近建案比較半徑圈
 }
 
 // 右鍵反查回傳的分區資訊（含點擊座標，供附近建案比較）
@@ -66,11 +67,39 @@ function LocatedPinLayer({ located }: { located: LocatedParcel | null | undefine
   return null;
 }
 
-// 預售建案「大樓」圖示（藍色大樓 + 單價標籤），與土地圓點明顯區隔
-function buildingIcon(unitPrice: number | null): L.DivIcon {
-  const label =
+// 附近建案比較半徑圈（淡色，僅供參考範圍視覺化）：試算結果出現時顯示，清除定位時一併移除
+function CompareRadiusLayer({
+  circle,
+}: {
+  circle: { lat: number; lng: number; km: number } | null | undefined;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (!circle) return;
+    const layer = L.circle([circle.lat, circle.lng], {
+      radius: circle.km * 1000,
+      color: "#0284c7",
+      weight: 1,
+      opacity: 0.5,
+      fillColor: "#0284c7",
+      fillOpacity: 0.06,
+    }).addTo(map);
+    return () => {
+      map.removeLayer(layer);
+    };
+  }, [map, circle]);
+  return null;
+}
+
+// 預售建案「大樓」圖示（藍色大樓 + 開價標籤，下方另加實價登錄成交均價標籤區隔顏色）
+function buildingIcon(unitPrice: number | null, actualUnitPrice?: number | null): L.DivIcon {
+  const askLabel =
     unitPrice != null
       ? `<span style="background:#1e3a5f;color:#fff;font-size:11px;line-height:1;padding:2px 5px;border-radius:8px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.3)">${unitPrice} 萬</span>`
+      : "";
+  const actualLabel =
+    actualUnitPrice != null
+      ? `<span style="margin-top:2px;background:#b45309;color:#fff;font-size:11px;line-height:1;padding:2px 5px;border-radius:8px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.3)">實登 ${actualUnitPrice} 萬</span>`
       : "";
   return L.divIcon({
     className: "",
@@ -87,10 +116,21 @@ function buildingIcon(unitPrice: number | null): L.DivIcon {
           <rect x="16" y="22" width="2" height="2"/><rect x="19" y="23" width="2" height="2"/>
         </g>
       </svg>
-      ${label}</div>`,
-    iconSize: [26, 48],
+      ${askLabel}${actualLabel}</div>`,
+    iconSize: [26, actualUnitPrice != null ? 64 : 48],
     iconAnchor: [13, 32],
   });
+}
+
+// 預售建案圖示滑鼠提示：開價（591 推估）＋ 實價登錄成交均價（若有對應成交紀錄）
+function presaleTooltip(p: Property): string {
+  const name = p.presale?.buildName ?? p.address;
+  const ask = p.presale?.unitPrice != null ? `｜開價 ${p.presale.unitPrice} 萬/坪` : "";
+  const actual =
+    p.presale?.actualUnitPrice != null
+      ? `｜實登 ${p.presale.actualUnitPrice} 萬/坪（${p.presale.actualCount ?? 0} 筆）`
+      : "";
+  return `${name}${ask}${actual}`;
 }
 
 // 預售建案疊層（土地評估模式）：以大樓圖示呈現，點擊開啟明細卡
@@ -108,8 +148,10 @@ function PresaleLayer({
       showCoverageOnHover: false,
     });
     for (const p of presale) {
-      const marker = L.marker([p.lat, p.lng], { icon: buildingIcon(p.presale?.unitPrice ?? null) });
-      marker.bindTooltip(`${p.presale?.buildName ?? p.address}${p.presale?.unitPrice != null ? `｜${p.presale.unitPrice} 萬/坪` : ""}`);
+      const marker = L.marker([p.lat, p.lng], {
+        icon: buildingIcon(p.presale?.unitPrice ?? null, p.presale?.actualUnitPrice),
+      });
+      marker.bindTooltip(presaleTooltip(p));
       marker.on("click", () => onSelect(p));
       cluster.addLayer(marker);
     }
@@ -141,10 +183,10 @@ function ClusterLayer({ properties, onSelect, colorFor }: Props) {
     for (const p of properties) {
       let marker: L.Marker | L.CircleMarker;
       if (p.type === "預售屋") {
-        marker = L.marker([p.lat, p.lng], { icon: buildingIcon(p.presale?.unitPrice ?? null) });
-        marker.bindTooltip(
-          `${p.presale?.buildName ?? p.address}${p.presale?.unitPrice != null ? `｜${p.presale.unitPrice} 萬/坪` : ""}`
-        );
+        marker = L.marker([p.lat, p.lng], {
+          icon: buildingIcon(p.presale?.unitPrice ?? null, p.presale?.actualUnitPrice),
+        });
+        marker.bindTooltip(presaleTooltip(p));
       } else {
         const fillColor = colorFor(p);
         marker = L.circleMarker([p.lat, p.lng], {
@@ -154,7 +196,9 @@ function ClusterLayer({ properties, onSelect, colorFor }: Props) {
           fillOpacity: 0.85,
           weight: 1,
         });
-        marker.bindTooltip(p.address);
+        marker.bindTooltip(
+          p.sale?.isSpecialTransaction ? `${p.address}（特殊交易，僅供參考）` : p.address
+        );
       }
       marker.on("click", () => onSelect(p));
       cluster.addLayer(marker);
@@ -264,6 +308,7 @@ export default function PropertyMap({
   showCadastral,
   onPickZone,
   presale,
+  compareCircle,
 }: Props) {
   return (
     <MapContainer center={[24.155, 120.65]} zoom={13} className="w-full h-full">
@@ -288,6 +333,7 @@ export default function PropertyMap({
       <FocusBoundsFlyTo focus={focusBounds} />
       {onPickZone && <ZoneRightClick onPickZone={onPickZone} />}
       {presale && presale.length > 0 && <PresaleLayer presale={presale} onSelect={onSelect} />}
+      <CompareRadiusLayer circle={compareCircle} />
       <LocatedPinLayer located={located} />
     </MapContainer>
   );
