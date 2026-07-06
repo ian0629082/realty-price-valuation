@@ -118,6 +118,7 @@ function pickLatestSale(sales, propertyType) {
     buildingArea: sqmToPin(areaSqm), // 坪
     useZone: normalizeUseZone(latest.useZone),
     useDesignation: normalizeUseZone(latest.useDesignation),
+    isSpecialTransaction: latest.isSpecialTransaction ?? false,
   };
 }
 
@@ -131,12 +132,18 @@ function toUiProperty(raw, index, geocodeCache) {
   const buildingArea = sale?.buildingArea || sqmToPin(raw.rents[0]?.buildingArea || 0);
 
   const useDesignation = normalizeUseZone(sale?.useDesignation);
-  // 建蔽率/容積率（%）：優先都市計畫分區 KML（raw.detailedZone 疊合者）；
-  // 非都市土地（KML 無此分區）則依「使用地類別」套非都市法定表。
-  let zoneCoverage = raw.zoneCoverage ?? null;
-  let zoneFAR = raw.zoneFAR ?? null;
-  let zoneSource = raw.detailedZone ? "都市計畫" : null;
-  if (!raw.detailedZone && zoneFAR == null && STATUTORY_ZONE_BY_DESIGNATION[useDesignation]) {
+  // 政府資料若填了「非都市土地使用編定」，代表這筆土地官方認定為非都市土地，
+  // 不可能同時是都市計畫分區；此時 KML 都市分區疊圖（enrich-zone.mjs 純座標落點比對，
+  // 可能因圖資邊界精度誤判）不具參考價值，一律忽略，改以官方非都市分類為準。
+  const isNonUrban = !!useDesignation;
+  const detailedZone = isNonUrban ? null : raw.detailedZone;
+
+  // 建蔽率/容積率（%）：優先都市計畫分區 KML（detailedZone 疊合者）；
+  // 非都市土地（無都市分區，或上述官方非都市土地判定）則依「使用地類別」套非都市法定表。
+  let zoneCoverage = isNonUrban ? null : raw.zoneCoverage ?? null;
+  let zoneFAR = isNonUrban ? null : raw.zoneFAR ?? null;
+  let zoneSource = detailedZone ? "都市計畫" : null;
+  if (!detailedZone && zoneFAR == null && STATUTORY_ZONE_BY_DESIGNATION[useDesignation]) {
     const s = STATUTORY_ZONE_BY_DESIGNATION[useDesignation];
     zoneCoverage = s.coverage;
     zoneFAR = s.far;
@@ -157,7 +164,7 @@ function toUiProperty(raw, index, geocodeCache) {
     roadName: raw.roadName,
     roadWidthSource: raw.roadWidthSource ?? "none",
     buildingArea,
-    useZone: raw.detailedZone || normalizeUseZone(sale?.useZone),
+    useZone: detailedZone || normalizeUseZone(sale?.useZone),
     useDesignation,
     // 建蔽率/容積率（%）：都市計畫 KML 或非都市法定表
     zoneCoverage,
@@ -176,6 +183,9 @@ function toUiProperty(raw, index, geocodeCache) {
   };
 }
 
+// 土地坪數低於此門檻視為畸零地/持分等零碎土地，單價參考價值低，地圖上直接排除
+const MIN_LAND_AREA_PIN = 10;
+
 function main() {
   const raw = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
   const geocodeCache = loadGeocodeCache();
@@ -185,18 +195,24 @@ function main() {
 
   // 排除公共設施/非建築性分區，並統計被移除的分區明細
   const removedByZone = {};
+  let removedSmallLand = 0;
   const uiProperties = mapped.filter((p) => {
     if (isNonBuildableZone(p.useZone)) {
       removedByZone[p.useZone] = (removedByZone[p.useZone] || 0) + 1;
       return false;
     }
+    if (p.type === "土地" && p.buildingArea > 0 && p.buildingArea < MIN_LAND_AREA_PIN) {
+      removedSmallLand++;
+      return false;
+    }
     return true;
   });
   const removedTotal = mapped.length - uiProperties.length;
-  console.log(`已排除公共設施/非建築性分區：${removedTotal} 筆`);
+  console.log(`已排除公共設施/非建築性分區：${removedTotal - removedSmallLand} 筆`);
   for (const [z, c] of Object.entries(removedByZone).sort((a, b) => b[1] - a[1])) {
     console.log(`  ${z}：${c}`);
   }
+  console.log(`已排除土地坪數低於 ${MIN_LAND_AREA_PIN} 坪的畸零地：${removedSmallLand} 筆`);
 
   fs.mkdirSync(path.dirname(UI_OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(UI_OUTPUT_FILE, JSON.stringify(uiProperties, null, 2), "utf-8");

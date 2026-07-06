@@ -47,6 +47,7 @@ function loadSaleRows() {
         useDesignation: cols[6] || "",
         buildingAreaSqm: Number(cols[15]) || 0,
         totalPrice: Number(cols[21]) || 0,
+        note: cols[26] || "", // 備註：政府標記特殊關係人/持分/畸零地等非典型交易
         serial: (cols[27] || "").trim(), // 編號：跨季去重依據
       });
     }
@@ -86,6 +87,12 @@ function isCommercialUse(buildingType, mainUse) {
   return /店面|店鋪|店舖|商業|商辦|商店|辦公|廠房|工廠|營業/.test(text);
 }
 
+// 政府備註標記價格可能不反映市場行情的交易（親友/員工/持分/畸零地/政府標售/協議價購/債務抵償等）；
+// 不含「陽台外推」「其他增建」「頂樓加蓋」等單純現況描述，避免誤傷大量正常交易
+function isSpecialTransactionNote(note) {
+  return /特殊關係間之交易|持分|畸零地|政府機關標讓售|協議價購|債務抵償/.test(note || "");
+}
+
 function buildProperties(saleRows, rentRows) {
   const propertiesByAddress = new Map();
 
@@ -118,6 +125,7 @@ function buildProperties(saleRows, rentRows) {
       buildingAreaSqm: row.buildingAreaSqm,
       useZone: row.useZone,
       useDesignation: row.useDesignation,
+      isSpecialTransaction: isSpecialTransactionNote(row.note),
     });
   }
 

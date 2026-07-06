@@ -5,6 +5,7 @@ export interface SaleTransaction {
   date: string;
   transactionType: string;
   buildingArea: number; // 坪
+  isSpecialTransaction?: boolean; // 政府備註為親友/員工/共有人等特殊關係、持分、畸零地等交易，價格可能不反映市場行情
 }
 
 export interface RentTransaction {

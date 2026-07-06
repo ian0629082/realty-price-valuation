@@ -42,9 +42,22 @@ export function metricValue(p: Property, viewMode: ViewMode): number | null {
 // 分位著色：便宜→貴（綠→紅）。投報率意義相反，高投報為佳，故反轉。
 export const TIER_COLORS = ["#16a34a", "#84cc16", "#eab308", "#f97316", "#dc2626"];
 const NO_DATA_COLOR = "#9ca3af";
+export const SPECIAL_TRANSACTION_COLOR = "#a855f7"; // 特殊交易（親友/持分/畸零地等）：紫色，與其餘色階明顯區隔
+
+// 買賣單價類指標且成交紀錄被政府備註標記為特殊交易時，價格可能不反映市場行情，
+// 統計（中位數/色階分位）與地圖著色都應排除／另外標示，但地圖上仍會顯示該點本身
+function isSpecialSaleTransaction(p: Property, viewMode: ViewMode): boolean {
+  return metricKind(viewMode) === "unitPrice" && viewMode !== "presale" && !!p.sale?.isSpecialTransaction;
+}
+
+// 目前範圍內被排除在統計外的特殊交易筆數，供總覽面板附註說明
+export function specialTransactionCount(properties: Property[], viewMode: ViewMode): number {
+  return properties.filter((p) => isSpecialSaleTransaction(p, viewMode)).length;
+}
 
 function sortedValues(properties: Property[], viewMode: ViewMode): number[] {
   return properties
+    .filter((p) => !isSpecialSaleTransaction(p, viewMode))
     .map((p) => metricValue(p, viewMode))
     .filter((v): v is number => v != null && v > 0)
     .sort((a, b) => a - b);
@@ -71,6 +84,7 @@ export function buildMetricScale(properties: Property[], viewMode: ViewMode): Me
   const colors = kind === "capRate" ? [...TIER_COLORS].reverse() : TIER_COLORS;
 
   const colorFor = (p: Property): string => {
+    if (isSpecialSaleTransaction(p, viewMode)) return SPECIAL_TRANSACTION_COLOR;
     const v = metricValue(p, viewMode);
     if (v == null || v <= 0 || Number.isNaN(breaks[0])) return NO_DATA_COLOR;
     let tier = 0;
@@ -90,6 +104,21 @@ export interface MetricSummary {
   p75: number;
   min: number;
   max: number;
+}
+
+export interface PresaleActualSummary {
+  median: number; // 實價登錄成交均價中位數（萬 / 坪）
+  count: number; // 有實登資料的建案數
+}
+
+// 預售屋「開價 vs 實價登錄」對比用：實登成交均價的中位數（僅計入查無實登為 null 以外的建案）
+export function presaleActualSummary(properties: Property[]): PresaleActualSummary | null {
+  const values = properties
+    .map((p) => p.presale?.actualUnitPrice)
+    .filter((v): v is number => v != null && v > 0)
+    .sort((a, b) => a - b);
+  if (values.length === 0) return null;
+  return { median: quantile(values, 0.5), count: values.length };
 }
 
 export function summarize(properties: Property[], viewMode: ViewMode): MetricSummary | null {
@@ -251,6 +280,39 @@ export function districtSummaries(
     .sort((a, b) => (b.median ?? 0) - (a.median ?? 0));
 }
 
+// 使用分區歸併成大類（住宅區／商業區／工業區／鄉村區／其他），避免「第一之三種住宅區」
+// 這類細分法定分區各自成一條、樣本數過少而失去統計意義
+function normalizeZoneCategory(useZone: string | undefined): string {
+  if (!useZone) return "其他";
+  if (useZone.includes("住宅")) return "住宅區";
+  if (useZone.includes("商業")) return "商業區";
+  if (useZone.includes("工業")) return "工業區";
+  if (useZone.includes("鄉村")) return "鄉村區";
+  return "其他";
+}
+
+export interface ZoneStat {
+  zone: string;
+  count: number;
+  median: number | null;
+}
+
+// 分區行情比較（土地買賣成交專用）：使用分區對地價的影響通常比行政區更明顯
+export function zoneSummaries(properties: Property[], viewMode: ViewMode): ZoneStat[] {
+  const byZone = new Map<string, Property[]>();
+  for (const p of properties) {
+    const key = normalizeZoneCategory(p.useZone);
+    if (!byZone.has(key)) byZone.set(key, []);
+    byZone.get(key)!.push(p);
+  }
+  return [...byZone.entries()]
+    .map(([zone, ps]) => {
+      const s = summarize(ps, viewMode);
+      return { zone, count: s?.count ?? 0, median: s?.median ?? null };
+    })
+    .sort((a, b) => (b.median ?? 0) - (a.median ?? 0));
+}
+
 // ── 距離與附近建案比較 ──────────────────────────────────────────────────────
 // 兩點間球面距離（公里，Haversine）
 export function distanceKm(
@@ -270,6 +332,16 @@ export function distanceKm(
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
+// 篩出參考點半徑內的物件（公里），供土地評估「只看預售屋／只看土地成交」的總覽統計使用
+export function withinRadiusKm(
+  properties: Property[],
+  refLat: number,
+  refLng: number,
+  radiusKm: number
+): Property[] {
+  return properties.filter((p) => distanceKm(refLat, refLng, p.lat, p.lng) <= radiusKm);
+}
+
 export interface NearbyPresaleStats {
   count: number; // 半徑內有單價的建案數
   median: number; // 單價中位數（萬 / 坪）
@@ -279,7 +351,8 @@ export interface NearbyPresaleStats {
 
 export interface NearbyPresaleItem {
   buildName: string;
-  unitPrice: number; // 萬 / 坪
+  unitPrice: number; // 萬 / 坪（591 開價推估）
+  actualUnitPrice: number | null; // 萬 / 坪（實價登錄成交均價，依建案名對應，查無為 null）
   distanceKm: number;
 }
 
@@ -295,6 +368,7 @@ export function nearbyPresaleList(
     .map((p) => ({
       buildName: p.presale!.buildName,
       unitPrice: p.presale!.unitPrice as number,
+      actualUnitPrice: p.presale!.actualUnitPrice ?? null,
       distanceKm: distanceKm(refLat, refLng, p.lat, p.lng),
     }))
     .filter((item) => item.distanceKm <= radiusKm)
