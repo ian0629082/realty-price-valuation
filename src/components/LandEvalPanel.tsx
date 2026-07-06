@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { calculateLandPrice, nearbyPresaleStats } from "@/lib/price";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { calculateLandPrice, nearbyPresaleStats, nearbyPresaleList } from "@/lib/price";
 import { Property } from "@/types/property";
 import ParcelLocator, { LocatedParcel } from "@/components/ParcelLocator";
 
@@ -49,6 +50,10 @@ export default function LandEvalPanel({
   const [landArea, setLandArea] = useState(""); // 土地坪數
   const [landPrice, setLandPrice] = useState(""); // 土地買價（萬 / 坪）
   const [zoneFAR, setZoneFAR] = useState(""); // 容積率（既有欄位，300 = 300%）
+  const [showNearbyList, setShowNearbyList] = useState(false); // 顯示附近建案清單（名稱＋單價）
+  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
+  const nearbyTriggerRef = useRef<HTMLButtonElement>(null); // 觸發按鈕（連結樣式）
+  const nearbyPopoverRef = useRef<HTMLDivElement>(null); // 傳送門彈出框本體
 
   // 定位到新地號時，若查到容積率則自動帶入（使用者仍可手動修改）
   useEffect(() => {
@@ -102,6 +107,52 @@ export default function LandEvalPanel({
         : null,
     [refPoint, presale]
   );
+
+  // 附近建案清單（名稱＋單價），供使用者點開查看比較依據
+  const nearbyList = useMemo(
+    () =>
+      refPoint && presale && presale.length
+        ? nearbyPresaleList(presale, refPoint.lat, refPoint.lng, COMPARE_RADIUS_KM)
+        : [],
+    [refPoint, presale]
+  );
+
+  // 點擊清單與觸發按鈕以外的地方時自動收合
+  useEffect(() => {
+    if (!showNearbyList) return;
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        nearbyPopoverRef.current?.contains(target) ||
+        nearbyTriggerRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setShowNearbyList(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showNearbyList]);
+
+  const NEARBY_POPOVER_WIDTH = 240;
+  const NEARBY_POPOVER_MAX_HEIGHT = 288;
+
+  // 開關附近建案清單：以觸發按鈕的畫面座標計算彈出框位置（fixed 定位，貼齊視窗邊界避免溢出）
+  function toggleNearbyList() {
+    if (!showNearbyList && nearbyTriggerRef.current) {
+      const rect = nearbyTriggerRef.current.getBoundingClientRect();
+      let left = rect.right + 8;
+      if (left + NEARBY_POPOVER_WIDTH > window.innerWidth - 8) {
+        left = Math.max(8, rect.left - NEARBY_POPOVER_WIDTH - 8);
+      }
+      let top = rect.top;
+      if (top + NEARBY_POPOVER_MAX_HEIGHT > window.innerHeight - 8) {
+        top = Math.max(8, window.innerHeight - NEARBY_POPOVER_MAX_HEIGHT - 8);
+      }
+      setPopoverPos({ top, left });
+    }
+    setShowNearbyList((v) => !v);
+  }
 
   // 臨路寬（僅地號定位提供，右鍵反查不含此資訊）：僅供參考，不影響試算公式
   const roadInfo = located;
@@ -285,6 +336,51 @@ export default function LandEvalPanel({
                           {high ? "高於" : "低於"}中位數 {Math.abs(pct).toFixed(1)}%
                         </span>
                       </div>
+
+                      {nearbyList.length > 0 && (
+                        <button
+                          ref={nearbyTriggerRef}
+                          type="button"
+                          onClick={toggleNearbyList}
+                          className="w-full text-left text-xs font-medium text-sky-700 underline decoration-sky-400 underline-offset-2 hover:text-sky-900"
+                        >
+                          {showNearbyList
+                            ? "收合建案明細 ▴"
+                            : `▸ 查看附近 ${nearbyList.length} 筆建案明細與售價`}
+                        </button>
+                      )}
+
+                      {showNearbyList &&
+                        nearbyList.length > 0 &&
+                        popoverPos &&
+                        createPortal(
+                          <div
+                            ref={nearbyPopoverRef}
+                            style={{
+                              position: "fixed",
+                              top: popoverPos.top,
+                              left: popoverPos.left,
+                              width: NEARBY_POPOVER_WIDTH,
+                              maxHeight: NEARBY_POPOVER_MAX_HEIGHT,
+                            }}
+                            className="overflow-y-auto rounded-lg border border-sky-300 bg-white p-2.5 shadow-2xl z-[2000]"
+                          >
+                            <p className="mb-1 text-[11px] font-medium text-gray-500">
+                              附近 {COMPARE_RADIUS_KM}km 預售建案（{nearbyList.length} 筆，依距離排序）
+                            </p>
+                            <ul className="space-y-1">
+                              {nearbyList.map((item, i) => (
+                                <li key={i} className="flex justify-between gap-2 text-xs">
+                                  <span className="text-gray-700 truncate">{item.buildName}</span>
+                                  <span className="shrink-0 font-medium text-sky-800">
+                                    {fmt(item.unitPrice)} 萬/坪
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>,
+                          document.body
+                        )}
                     </div>
                   );
                 })()

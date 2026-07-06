@@ -277,6 +277,30 @@ export interface NearbyPresaleStats {
   max: number;
 }
 
+export interface NearbyPresaleItem {
+  buildName: string;
+  unitPrice: number; // 萬 / 坪
+  distanceKm: number;
+}
+
+// 參考點半徑內、有推估單價的預售建案清單（依距離近到遠排序），供使用者點開查看個別建案
+export function nearbyPresaleList(
+  presale: Property[],
+  refLat: number,
+  refLng: number,
+  radiusKm: number
+): NearbyPresaleItem[] {
+  return presale
+    .filter((p) => p.presale?.unitPrice != null)
+    .map((p) => ({
+      buildName: p.presale!.buildName,
+      unitPrice: p.presale!.unitPrice as number,
+      distanceKm: distanceKm(refLat, refLng, p.lat, p.lng),
+    }))
+    .filter((item) => item.distanceKm <= radiusKm)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+}
+
 // 參考點半徑內、有推估單價的預售建案單價統計（萬 / 坪）
 export function nearbyPresaleStats(
   presale: Property[],
