@@ -8,17 +8,24 @@ import MarketFilters from "@/components/MarketFilters";
 import DetailCard from "@/components/DetailCard";
 import MarketStatsPanel from "@/components/MarketStatsPanel";
 import type { LocatedParcel } from "@/components/ParcelLocator";
-import LandEvalPanel from "@/components/LandEvalPanel";
+import LandEvalPanel, { MapFocus } from "@/components/LandEvalPanel";
 import {
   buildMetricScale,
   applyFilters,
   computeFilterBounds,
   withinBounds,
+  withinRadiusKm,
   districtSummaries,
+  zoneSummaries,
   EMPTY_FILTERS,
   MarketFilters as MarketFiltersType,
   MapBounds,
 } from "@/lib/price";
+
+// 「只看預售屋」總覽統計半徑，與土地評估「附近建案售價比較」一致
+const PRESALE_STATS_RADIUS_KM = 1;
+// 「只看土地成交」總覽統計半徑
+const LAND_SALE_STATS_RADIUS_KM = 2;
 
 const PropertyMap = dynamic(() => import("@/components/PropertyMap"), { ssr: false });
 
@@ -50,6 +57,12 @@ export default function Home() {
   } | null>(null);
   // 預售建案疊層（僅土地評估模式載入，供大樓圖示與 3km 售價比較）
   const [presale, setPresale] = useState<Property[]>([]);
+  // 土地評估試算結果出現時，地圖上顯示的附近建案比較半徑圈（淡色圓圈）
+  const [compareCircle, setCompareCircle] = useState<{ lat: number; lng: number; km: number } | null>(
+    null
+  );
+  // 土地評估模式：地圖只顯示預售屋／只顯示土地成交（切換兩個疊層各自的顯示與否）
+  const [mapFocus, setMapFocus] = useState<MapFocus>("all");
   // 手機版：篩選側欄以抽屜形式顯示，預設收合
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   // 手機版：土地評估模式的「地圖／試算」分頁（避免試算面板與總覽面板疊在一起）
@@ -141,6 +154,42 @@ export default function Home() {
     [filtered, filters.viewMode]
   );
 
+  // 土地買賣成交專用：改以使用分區（住宅/商業/工業…）比較取代區域比較，價格參考價值較高
+  const zoneStats = useMemo(
+    () => (filters.viewMode === "land-sale" ? zoneSummaries(filtered, filters.viewMode) : null),
+    [filtered, filters.viewMode]
+  );
+
+  // 土地評估「只看預售屋／只看土地成交」時，右下角總覽改統計地號定位點半徑內的資料
+  // （而非目前畫面範圍），且改用「Nkm內 X 筆」文字；尚未定位前維持原本畫面範圍統計
+  const statsOverride = useMemo(() => {
+    if (filters.viewMode !== "land-eval" || !located || mapFocus === "all") return null;
+    const radiusKm = mapFocus === "presaleOnly" ? PRESALE_STATS_RADIUS_KM : LAND_SALE_STATS_RADIUS_KM;
+    const nearby =
+      mapFocus === "presaleOnly"
+        ? withinRadiusKm(presale, located.lat, located.lng, radiusKm)
+        : withinRadiusKm(filtered, located.lat, located.lng, radiusKm);
+    const overrideViewMode = mapFocus === "presaleOnly" ? ("presale" as const) : filters.viewMode;
+    return {
+      visible: nearby,
+      viewMode: overrideViewMode,
+      scale: buildMetricScale(nearby, overrideViewMode),
+      radiusLabel: `${radiusKm}km內`,
+    };
+  }, [filters.viewMode, located, mapFocus, presale, filtered]);
+
+  // 「只看預售屋／只看土地成交」按鈕上顯示的即時筆數：有定位時為半徑內，否則為目前範圍全部
+  const layerCounts = useMemo(() => {
+    if (filters.viewMode !== "land-eval") return { presaleCount: 0, landSaleCount: 0 };
+    const presaleCount = located
+      ? withinRadiusKm(presale, located.lat, located.lng, PRESALE_STATS_RADIUS_KM).length
+      : presale.length;
+    const landSaleCount = located
+      ? withinRadiusKm(filtered, located.lat, located.lng, LAND_SALE_STATS_RADIUS_KM).length
+      : filtered.length;
+    return { presaleCount, landSaleCount };
+  }, [filters.viewMode, located, presale, filtered]);
+
   return (
     <div className="flex h-dvh w-screen overflow-hidden">
       <FilterPanel
@@ -152,7 +201,11 @@ export default function Home() {
         onChange={(f) => {
           setSelected(null);
           setMarketFilters(EMPTY_FILTERS);
-          if (f.viewMode !== "land-eval") setLocated(null); // 離開土地評估即清除定位圖釘
+          if (f.viewMode !== "land-eval") {
+            setLocated(null); // 離開土地評估即清除定位圖釘
+            setCompareCircle(null); // 一併清除比較半徑圈
+            setMapFocus("all"); // 一併重置地圖顯示焦點
+          }
           if (f.viewMode !== filters.viewMode) {
             setMobileLandEvalView("map"); // 切換檢視模式時重置土地評估手機分頁
             // 手機版抽屜：切到土地評估才自動收合（該模式改用地圖／試算分頁操作）；
@@ -203,7 +256,9 @@ export default function Home() {
           </div>
         )}
         <PropertyMap
-          properties={filtered}
+          properties={
+            filters.viewMode === "land-eval" && mapFocus === "presaleOnly" ? [] : filtered
+          }
           onSelect={setSelected}
           colorFor={scale.colorFor}
           onBoundsChange={setBounds}
@@ -223,16 +278,27 @@ export default function Home() {
                   })
               : undefined
           }
-          presale={filters.viewMode === "land-eval" ? presale : undefined}
+          presale={
+            filters.viewMode === "land-eval"
+              ? mapFocus === "landSaleOnly"
+                ? []
+                : presale
+              : undefined
+          }
+          compareCircle={filters.viewMode === "land-eval" ? compareCircle : null}
         />
         {!loading && properties.length > 0 && (
           <MarketStatsPanel
-            visible={visible}
-            viewMode={filters.viewMode}
-            scale={scale}
+            visible={statsOverride ? statsOverride.visible : visible}
+            viewMode={statsOverride ? statsOverride.viewMode : filters.viewMode}
+            scale={statsOverride ? statsOverride.scale : scale}
             districtStats={districtStats}
+            zoneStats={statsOverride ? null : zoneStats}
             alignRight={filters.viewMode === "land-eval"}
             hideOnMobile={filters.viewMode === "land-eval" && mobileLandEvalView === "eval"}
+            radiusLabel={statsOverride?.radiusLabel}
+            hideDistrictCompare={!!statsOverride}
+            hideColorLegend={!!statsOverride && mapFocus === "presaleOnly"}
           />
         )}
         {filters.viewMode === "land-eval" && (
@@ -244,6 +310,10 @@ export default function Home() {
             presale={presale}
             mobileFullScreen={mobileLandEvalView === "eval"}
             onMobileBack={() => setMobileLandEvalView("map")}
+            onCompareRadiusChange={setCompareCircle}
+            onMapFocusChange={setMapFocus}
+            presaleCount={layerCounts.presaleCount}
+            landSaleCount={layerCounts.landSaleCount}
           />
         )}
         {selected && <DetailCard property={selected} onClose={() => setSelected(null)} />}

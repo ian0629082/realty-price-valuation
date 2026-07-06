@@ -6,7 +6,7 @@ import { calculateLandPrice, nearbyPresaleStats, nearbyPresaleList } from "@/lib
 import { Property } from "@/types/property";
 import ParcelLocator, { LocatedParcel } from "@/components/ParcelLocator";
 
-const COMPARE_RADIUS_KM = 3; // 附近建案售價比較半徑
+const COMPARE_RADIUS_KM = 1; // 附近建案售價比較半徑
 
 interface Props {
   located?: LocatedParcel | null; // 地號定位結果，用於自動帶入容積率
@@ -23,13 +23,20 @@ interface Props {
   presale?: Property[]; // 全區預售建案，供 3km 售價比較
   mobileFullScreen?: boolean; // 手機版：以全螢幕分頁取代浮動卡片（見「地圖／試算」切換）
   onMobileBack?: () => void; // 手機版：從試算全螢幕返回地圖
+  onCompareRadiusChange?: (circle: { lat: number; lng: number; km: number } | null) => void; // 試算結果出現時，通知地圖畫出比較半徑圈
+  onMapFocusChange?: (focus: MapFocus) => void; // 切換地圖只顯示預售屋／只顯示土地成交
+  presaleCount?: number; // 「只看預售屋」按鈕上顯示的即時筆數（有定位時為半徑內，否則為目前範圍）
+  landSaleCount?: number; // 「只看土地成交」按鈕上顯示的即時筆數
 }
+
+// 地圖顯示焦點：all＝兩者都顯示（預設），presaleOnly／landSaleOnly＝只留下其中一種疊層
+export type MapFocus = "all" | "presaleOnly" | "landSaleOnly";
 
 // 「住宅區」「商業區」（無編號舊制分區）容積率推估說明：都市計畫細部計畫依臨路寬度分級，
 // 圖資僅收未達 15 公尺道路之低級距，臨路 15 公尺以上且基地縱深 30 公尺內者容積率較高，僅供參考。
 function EstimatedFarNote() {
   return (
-    <p className="mt-0.5 text-[11px] text-amber-600">
+    <p className="mt-0.5 text-[11px] leading-snug text-amber-600">
       依都市計畫細部計畫臨路寬度推估之下限值（適用未達15公尺道路）；若臨路15公尺以上且基地縱深30公尺內，容積率可能較高（住宅區240%／商業區480%），正確數值請以地政機關核發資料為準
     </p>
   );
@@ -45,11 +52,31 @@ export default function LandEvalPanel({
   presale,
   mobileFullScreen,
   onMobileBack,
+  onCompareRadiusChange,
+  onMapFocusChange,
+  presaleCount,
+  landSaleCount,
 }: Props) {
   const [open, setOpen] = useState(true);
   const [landArea, setLandArea] = useState(""); // 土地坪數
   const [landPrice, setLandPrice] = useState(""); // 土地買價（萬 / 坪）
   const [zoneFAR, setZoneFAR] = useState(""); // 容積率（既有欄位，300 = 300%）
+  const [mapFocus, setMapFocus] = useState<MapFocus>("presaleOnly"); // 地圖只顯示預售屋／只顯示土地成交，預設只看預售屋
+  const [locatorKey, setLocatorKey] = useState(0); // 變動時強制 ParcelLocator 重新掛載，清空其內部地區/地段/地號欄位
+
+  // 清除定位：連同已輸入的坪數／買價／容積率，以及地號定位本身的地區/地段/地號欄位一併清空
+  function handleClear() {
+    setLandArea("");
+    setLandPrice("");
+    setZoneFAR("");
+    setLocatorKey((k) => k + 1);
+    onClear();
+  }
+
+  useEffect(() => {
+    onMapFocusChange?.(mapFocus);
+    return () => onMapFocusChange?.("all");
+  }, [mapFocus, onMapFocusChange]);
   const [showNearbyList, setShowNearbyList] = useState(false); // 顯示附近建案清單（名稱＋單價）
   const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
   const nearbyTriggerRef = useRef<HTMLButtonElement>(null); // 觸發按鈕（連結樣式）
@@ -99,6 +126,17 @@ export default function LandEvalPanel({
     if (pickedZone) return { lat: pickedZone.lat, lng: pickedZone.lng };
     return null;
   }, [located, pickedZone]);
+
+  // 試算結果出現時，通知地圖在參考點畫出比較半徑圈；清除定位或離開試算時一併移除
+  useEffect(() => {
+    if (!onCompareRadiusChange) return;
+    if (refPoint && result) {
+      onCompareRadiusChange({ lat: refPoint.lat, lng: refPoint.lng, km: COMPARE_RADIUS_KM });
+    } else {
+      onCompareRadiusChange(null);
+    }
+    return () => onCompareRadiusChange(null);
+  }, [refPoint, result, onCompareRadiusChange]);
 
   const nearby = useMemo(
     () =>
@@ -183,8 +221,11 @@ export default function LandEvalPanel({
 
       {open && (
         <div className="p-3">
-          <ParcelLocator onLocate={onLocate} onClear={onClear} hasResult={!!located} />
+          <ParcelLocator key={locatorKey} onLocate={onLocate} onClear={handleClear} hasResult={!!located} />
 
+          {/* 定位前只顯示地號定位，避免一開始就塞滿輸入欄與試算結果；定位後才展開下方全部內容 */}
+          {located && (
+          <>
           {roadInfo && (
             <p className="mt-2 text-[11px] text-gray-500">
               {roadInfo.roadWidth != null ? (
@@ -199,7 +240,8 @@ export default function LandEvalPanel({
             </p>
           )}
 
-          <div className="space-y-2 pt-3 mt-3 border-t">
+          <div className="flex gap-2 pt-3 mt-3 border-t">
+          <div className="flex-1 min-w-0 space-y-2">
             <div>
               <label className="block text-xs text-gray-600 mb-0.5">土地坪數（坪）</label>
               <input
@@ -211,6 +253,7 @@ export default function LandEvalPanel({
                 placeholder="如 100、35.68"
                 value={landArea}
                 onChange={(e) => setLandArea(e.target.value)}
+                onWheel={(e) => e.currentTarget.blur()}
               />
             </div>
             <div>
@@ -224,10 +267,11 @@ export default function LandEvalPanel({
                 placeholder="如 120、128.5"
                 value={landPrice}
                 onChange={(e) => setLandPrice(e.target.value)}
+                onWheel={(e) => e.currentTarget.blur()}
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-0.5">容積率（%，如 300）</label>
+              <label className="block text-xs text-gray-600 mb-0.5">容積率（%）</label>
               <input
                 type="number"
                 inputMode="decimal"
@@ -237,10 +281,11 @@ export default function LandEvalPanel({
                 placeholder="如 300（＝300%）"
                 value={zoneFAR}
                 onChange={(e) => setZoneFAR(e.target.value)}
+                onWheel={(e) => e.currentTarget.blur()}
               />
               {located && located.zoneFAR != null && (
                 <>
-                  <p className="mt-0.5 text-[11px] text-emerald-700">
+                  <p className="mt-0.5 text-[11px] leading-snug text-emerald-700">
                     已依地號帶入{located.useZone ? `「${located.useZone}」` : ""}容積率 {located.zoneFAR}%
                     {located.zoneFAREstimated ? "（推估值）" : ""}
                   </p>
@@ -248,13 +293,13 @@ export default function LandEvalPanel({
                 </>
               )}
               {located && located.zoneFAR == null && (
-                <p className="mt-0.5 text-[11px] text-amber-600">
+                <p className="mt-0.5 text-[11px] leading-snug text-amber-600">
                   此地號{located.useZone ? `為「${located.useZone}」，` : "查無分區，"}無容積率資料，請手動輸入
                 </p>
               )}
               {!located && pickedZone && pickedZone.far != null && (
                 <>
-                  <p className="mt-0.5 text-[11px] text-emerald-700">
+                  <p className="mt-0.5 text-[11px] leading-snug text-emerald-700">
                     已帶入右鍵所選{pickedZone.useZone ? `「${pickedZone.useZone}」` : ""}容積率 {pickedZone.far}%
                     {pickedZone.farEstimated ? "（推估值）" : ""}
                   </p>
@@ -262,11 +307,69 @@ export default function LandEvalPanel({
                 </>
               )}
               {!located && pickedZone && pickedZone.far == null && (
-                <p className="mt-0.5 text-[11px] text-amber-600">
+                <p className="mt-0.5 text-[11px] leading-snug text-amber-600">
                   右鍵所選{pickedZone.useZone ? `「${pickedZone.useZone}」` : "此處"}無容積率資料，請手動輸入
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2 pt-5 shrink-0 w-28">
+            <button
+              type="button"
+              onClick={() => setMapFocus((m) => (m === "presaleOnly" ? "all" : "presaleOnly"))}
+              className={`flex flex-col items-center justify-center gap-0.5 rounded-2xl border-2 py-2.5 transition-all active:translate-y-0.5 ${
+                mapFocus === "presaleOnly"
+                  ? "bg-blue-500 border-blue-300 text-white"
+                  : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
+              style={{
+                boxShadow:
+                  mapFocus === "presaleOnly"
+                    ? "0 4px 0 #1d4ed8, inset 0 -3px 6px rgba(0,0,0,.15)"
+                    : "0 3px 0 #e2e8f0",
+              }}
+            >
+              <svg width="22" height="26" viewBox="0 0 26 32" className="shrink-0">
+                <path d="M4 8 L14 3 L14 31 L4 31 Z" fill={mapFocus === "presaleOnly" ? "#eff6ff" : "#2f6fb0"} />
+                <path d="M14 3 L22 7 L22 31 L14 31 Z" fill={mapFocus === "presaleOnly" ? "#bfdbfe" : "#1e4e82"} />
+              </svg>
+              <span className="text-xs font-semibold leading-tight mt-0.5">只看預售屋</span>
+              <span className={`text-[10px] leading-none ${mapFocus === "presaleOnly" ? "text-blue-100" : "text-slate-400"}`}>
+                {presaleCount ?? 0} 筆
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMapFocus((m) => (m === "landSaleOnly" ? "all" : "landSaleOnly"))}
+              className={`flex flex-col items-center justify-center gap-0.5 rounded-2xl border-2 py-2.5 transition-all active:translate-y-0.5 ${
+                mapFocus === "landSaleOnly"
+                  ? "bg-blue-500 border-blue-300 text-white"
+                  : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
+              style={{
+                boxShadow:
+                  mapFocus === "landSaleOnly"
+                    ? "0 4px 0 #1d4ed8, inset 0 -3px 6px rgba(0,0,0,.15)"
+                    : "0 3px 0 #e2e8f0",
+              }}
+            >
+              <svg width="22" height="22" viewBox="0 0 22 22" className="shrink-0">
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="9"
+                  fill={mapFocus === "landSaleOnly" ? "#fde68a" : "#eab308"}
+                  stroke={mapFocus === "landSaleOnly" ? "#fff" : "#334155"}
+                  strokeWidth="1.5"
+                />
+              </svg>
+              <span className="text-xs font-semibold leading-tight mt-0.5">只看土地成交</span>
+              <span className={`text-[10px] leading-none ${mapFocus === "landSaleOnly" ? "text-blue-100" : "text-slate-400"}`}>
+                {landSaleCount ?? 0} 筆
+              </span>
+            </button>
+          </div>
           </div>
 
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
@@ -297,6 +400,7 @@ export default function LandEvalPanel({
               </div>
             </div>
           )}
+          {result && <p className="mt-1 text-[11px] text-gray-500">試算內容不考慮獎勵容積</p>}
 
           {/* 附近 3km 預售建案售價比較 */}
           {result && (
@@ -307,7 +411,7 @@ export default function LandEvalPanel({
                   請先以「地號定位」或右鍵點擊地圖，設定比較的參考位置。
                 </p>
               ) : !nearby ? (
-                <p className="text-[11px] text-amber-600">此範圍內無建案報價可比較。</p>
+                <p className="text-[11px] leading-snug text-amber-600">此範圍內無建案報價可比較。</p>
               ) : (
                 (() => {
                   const est = result.estimatedSalePricePerPing;
@@ -368,13 +472,20 @@ export default function LandEvalPanel({
                             <p className="mb-1 text-[11px] font-medium text-gray-500">
                               附近 {COMPARE_RADIUS_KM}km 預售建案（{nearbyList.length} 筆，依距離排序）
                             </p>
-                            <ul className="space-y-1">
+                            <ul className="space-y-1.5">
                               {nearbyList.map((item, i) => (
-                                <li key={i} className="flex justify-between gap-2 text-xs">
-                                  <span className="text-gray-700 truncate">{item.buildName}</span>
-                                  <span className="shrink-0 font-medium text-sky-800">
-                                    {fmt(item.unitPrice)} 萬/坪
-                                  </span>
+                                <li key={i} className="text-xs border-b border-gray-100 last:border-0 pb-1 last:pb-0">
+                                  <p className="text-gray-700 truncate">{item.buildName}</p>
+                                  <p className="flex justify-between gap-2 mt-0.5">
+                                    <span className="font-medium text-sky-800">
+                                      開價 {fmt(item.unitPrice)} 萬
+                                    </span>
+                                    {item.actualUnitPrice != null && (
+                                      <span className="font-medium text-amber-700">
+                                        實登 {fmt(item.actualUnitPrice)} 萬
+                                      </span>
+                                    )}
+                                  </p>
                                 </li>
                               ))}
                             </ul>
@@ -386,6 +497,8 @@ export default function LandEvalPanel({
                 })()
               )}
             </div>
+          )}
+          </>
           )}
         </div>
       )}
