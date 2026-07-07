@@ -227,18 +227,20 @@ export default function LandEvalPanel({
           {located && (
           <>
           {roadInfo && (
-            <p className="mt-2 text-[11px] text-gray-500">
+            <p className="mt-2 text-[11px]">
               {roadInfo.roadWidth != null ? (
                 <>
-                  臨路寬：{roadInfo.roadWidth}m
-                  {roadInfo.roadName ? `（${roadInfo.roadName}）` : ""}
-                  {roadInfo.hasMedian ? "，有分隔島" : ""}
-                  （資料來源：臺中市道路寬度開放資料）
+                  <span className="text-sky-600">
+                    臨路寬：{roadInfo.roadWidth}m
+                    {roadInfo.roadName ? `（${roadInfo.roadName}）` : ""}
+                    {roadInfo.hasMedian ? "，有分隔島" : ""}
+                    （資料來源：臺中市道路寬度開放資料）
+                  </span>
                   <br />
-                  僅供參考，本次試算無參考路寬
+                  <span className="text-red-600">僅供參考，本次試算無參考路寬</span>
                 </>
               ) : (
-                "臨路寬：查無資料"
+                <span className="text-gray-500">臨路寬：查無資料</span>
               )}
             </p>
           )}
@@ -381,29 +383,37 @@ export default function LandEvalPanel({
             <div className="mt-3 rounded bg-gray-50 border p-2.5 text-sm space-y-1">
               <div className="flex justify-between">
                 <span className="text-gray-600">總容積</span>
-                <span className="font-medium">{fmt(result.totalFloorArea)} 坪</span>
+                <span className="font-medium">約 {fmt(result.totalFloorArea)} 坪</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">土地倍數</span>
-                <span className="font-medium">{fmt(result.landMultiplier)} 倍</span>
+                <span className="font-medium">約 {fmt(result.landMultiplier)} 倍</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">土地單坪價</span>
-                <span className="font-medium">{fmt(result.landCostPerBuildingPing)} 萬 / 坪</span>
+                <span className="font-medium">約 {fmt(result.landCostPerBuildingPing)} 萬 / 坪</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">營造成本</span>
-                <span className="font-medium">{fmt(result.constructionTotalCost)} 萬 / 坪</span>
+                <span className="text-gray-600">營造成本（建物+土地）</span>
+                <span className="font-medium">約 {fmt(result.constructionTotalCost)} 萬 / 坪</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">管銷費用</span>
+                <span className="font-medium">約 {fmt(result.managementCost)} 萬 / 坪</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">預設利潤（20%）</span>
+                <span className="font-medium">約 {fmt(result.profit)} 萬 / 坪</span>
               </div>
               <div className="flex justify-between border-t pt-1 mt-1">
                 <span className="text-gray-700 font-medium">預計售價</span>
                 <span className="font-semibold text-blue-700">
-                  {fmt(result.estimatedSalePricePerPing)} 萬 / 坪
+                  約 {fmt(result.estimatedSalePricePerPing)} 萬 / 坪
                 </span>
               </div>
             </div>
           )}
-          {result && <p className="mt-1 text-[11px] text-gray-500">試算內容不考慮獎勵容積</p>}
+          {result && <p className="mt-1 text-sm text-red-600">試算內容不考慮獎勵容積</p>}
 
           {/* 附近 3km 預售建案售價比較 */}
           {result && (

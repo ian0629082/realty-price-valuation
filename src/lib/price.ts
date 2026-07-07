@@ -413,6 +413,8 @@ export interface LandPriceResult {
   landMultiplier: number; // 土地倍數（倍）
   landCostPerBuildingPing: number; // 土地單坪價（萬 / 坪）
   constructionTotalCost: number; // 營造成本（萬 / 坪）
+  managementCost: number; // 管銷費用（萬 / 坪）
+  profit: number; // 預設利潤（萬 / 坪）
   estimatedSalePricePerPing: number; // 預計售價單坪價（萬 / 坪）
 }
 
@@ -435,15 +437,20 @@ export function calculateLandPrice(
   const landCostPerBuildingPing = landPricePerPing / landMultiplier;
   // 營造成本 = 建物興建成本 + 土地單坪價
   const constructionTotalCost = CONSTRUCTION_COST_PER_PING + landCostPerBuildingPing;
-  // 預計售價單坪價 = 營造成本 × 管銷倍率 × 利潤倍率
-  const estimatedSalePricePerPing =
-    constructionTotalCost * MANAGEMENT_SALES_MULTIPLIER * PROFIT_MULTIPLIER;
+  // 管銷費用 = 營造成本 × (管銷倍率 - 1)
+  const managementCost = constructionTotalCost * (MANAGEMENT_SALES_MULTIPLIER - 1);
+  // 預設利潤 = (營造成本 + 管銷費用) × (利潤倍率 - 1)
+  const profit = (constructionTotalCost + managementCost) * (PROFIT_MULTIPLIER - 1);
+  // 預計售價單坪價 = 營造成本 + 管銷費用 + 預設利潤
+  const estimatedSalePricePerPing = constructionTotalCost + managementCost + profit;
 
   return {
     totalFloorArea,
     landMultiplier,
     landCostPerBuildingPing,
     constructionTotalCost,
+    managementCost,
+    profit,
     estimatedSalePricePerPing,
   };
 }
