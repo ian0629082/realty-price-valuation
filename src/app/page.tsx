@@ -264,7 +264,7 @@ export default function Home() {
           onBoundsChange={setBounds}
           focusBounds={focusBounds}
           located={located}
-          showCadastral={filters.viewMode === "land-eval"}
+          showCadastral={filters.viewMode === "land-eval" || filters.viewMode === "land-sale"}
           onPickZone={
             filters.viewMode === "land-eval"
               ? (z) =>
