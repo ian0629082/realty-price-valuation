@@ -232,7 +232,10 @@ export default function LandEvalPanel({
                 <>
                   臨路寬：{roadInfo.roadWidth}m
                   {roadInfo.roadName ? `（${roadInfo.roadName}）` : ""}
-                  {roadInfo.hasMedian ? "，有分隔島" : ""} — 僅供參考，本次試算無參考路寬
+                  {roadInfo.hasMedian ? "，有分隔島" : ""}
+                  （資料來源：臺中市道路寬度開放資料）
+                  <br />
+                  僅供參考，本次試算無參考路寬
                 </>
               ) : (
                 "臨路寬：查無資料"
