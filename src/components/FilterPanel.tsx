@@ -61,7 +61,7 @@ export default function FilterPanel({
         />
       )}
       <div
-        className={`fixed sm:static inset-y-0 left-0 z-[1002] sm:z-auto w-72 max-w-[85vw] sm:w-64 sm:max-w-none shrink-0 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto transition-transform duration-200 sm:translate-x-0 ${
+        className={`fixed sm:static inset-y-0 left-0 z-[1002] sm:z-auto w-72 max-w-[85vw] sm:w-64 sm:max-w-none shrink-0 bg-indigo-100/60 border-r border-indigo-200 p-4 space-y-4 overflow-y-auto transition-transform duration-200 sm:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -83,7 +83,7 @@ export default function FilterPanel({
             <button
               key={key}
               onClick={() => onChange({ ...filters, viewMode: key })}
-              className={`w-full flex items-center gap-2 text-left px-2.5 py-2 rounded-lg text-sm font-medium border transition-colors ${
+              className={`w-full flex items-center gap-2 text-left px-2.5 py-2 rounded-lg text-sm font-medium border transition-all active:scale-95 ${
                 filters.viewMode === key
                   ? "bg-blue-600 text-white border-blue-600 shadow-sm"
                   : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
