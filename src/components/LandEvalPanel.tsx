@@ -199,7 +199,7 @@ export default function LandEvalPanel({
     <div
       className={`${
         mobileFullScreen ? "fixed inset-0 z-[1002]" : "hidden"
-      } sm:block sm:absolute sm:inset-auto sm:z-[1000] sm:top-4 sm:left-14 sm:w-72 bg-white shadow-lg sm:rounded-xl border border-slate-200 max-h-full sm:max-h-[calc(100vh-2rem)] overflow-y-auto`}
+      } sm:block sm:absolute sm:inset-auto sm:z-[1000] sm:top-4 sm:left-14 sm:w-80 bg-white/90 shadow-[0_4px_20px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.08)] sm:rounded-xl border border-white/80 max-h-full sm:max-h-[calc(100vh-2rem)] overflow-y-auto`}
     >
       <div className="flex items-center border-b">
         {mobileFullScreen && (
@@ -237,7 +237,7 @@ export default function LandEvalPanel({
                     （資料來源：臺中市道路寬度開放資料）
                   </span>
                   <br />
-                  <span className="text-red-600">僅供參考，本次試算無參考路寬</span>
+                  <span className="text-red-600 font-bold">僅供參考，本次試算無參考路寬</span>
                 </>
               ) : (
                 <span className="text-gray-500">臨路寬：查無資料</span>
@@ -377,7 +377,7 @@ export default function LandEvalPanel({
           </div>
           </div>
 
-          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-xs text-red-600 font-bold">{error}</p>}
 
           {result && (
             <div className="mt-3 rounded bg-gray-50 border p-2.5 text-sm space-y-1">
@@ -413,7 +413,7 @@ export default function LandEvalPanel({
               </div>
             </div>
           )}
-          {result && <p className="mt-1 text-sm text-red-600">試算內容不考慮獎勵容積</p>}
+          {result && <p className="mt-1 text-sm text-red-600 font-bold">試算內容不考慮獎勵容積</p>}
 
           {/* 附近 3km 預售建案售價比較 */}
           {result && (
