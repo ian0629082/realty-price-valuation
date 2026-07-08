@@ -1,7 +1,7 @@
 // 內政部不動產成交案件資料供應系統，季別格式：{民國年}S{季別1-4}
 // 4 季：114S1 ~ 114S4
 export const SEASONS = [
-  "114S1", "114S2", "114S3", "114S4",
+  "114S1", "114S2", "114S3", "114S4", "115S1",
 ];
 export const CITY_FILE_PREFIX = "b"; // b = 臺中市
 export const TARGET_DISTRICTS = ["南區", "大里區", "南屯區"];
