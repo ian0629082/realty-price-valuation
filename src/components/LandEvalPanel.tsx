@@ -9,6 +9,10 @@ import {
   nearbyLandSaleStats,
   buildDecisionAdvice,
   AdviceLevel,
+  EXEMPT_FLOOR_AREA_MULTIPLIER,
+  CONSTRUCTION_COST_PER_PING,
+  MANAGEMENT_SALES_MULTIPLIER,
+  PROFIT_MULTIPLIER,
 } from "@/lib/price";
 import { Property } from "@/types/property";
 import ParcelLocator, { LocatedParcel } from "@/components/ParcelLocator";
@@ -95,6 +99,7 @@ export default function LandEvalPanel({
     onMapFocusChange?.(mapFocus);
     return () => onMapFocusChange?.("all");
   }, [mapFocus, onMapFocusChange]);
+  const [showAssumptions, setShowAssumptions] = useState(false); // 顯示計算假設（固定參數與限制）
   const [showNearbyList, setShowNearbyList] = useState(false); // 顯示附近建案清單（名稱＋單價）
   const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
   const nearbyTriggerRef = useRef<HTMLButtonElement>(null); // 觸發按鈕（連結樣式）
@@ -455,6 +460,52 @@ export default function LandEvalPanel({
             </div>
           )}
           {result && <p className="mt-1 text-sm text-red-600 font-bold">試算內容不考慮獎勵容積</p>}
+
+          {/* 計算假設：固定參數與模型限制，寫死不開放調整（初判工具，避免使用者亂填造成假精確）*/}
+          {result && (
+            <div className="mt-2 rounded border border-slate-200 bg-white/70">
+              <button
+                type="button"
+                onClick={() => setShowAssumptions((v) => !v)}
+                className="w-full flex justify-between items-center px-2.5 py-1.5 text-left"
+              >
+                <span className="text-xs font-medium text-slate-600">ℹ️ 計算假設與限制</span>
+                <span className="text-[10px] text-slate-400">{showAssumptions ? "收合 ▴" : "展開 ▾"}</span>
+              </button>
+              {showAssumptions && (
+                <div className="px-2.5 pb-2 text-[11px] leading-relaxed text-slate-600">
+                  <ul className="space-y-0.5">
+                    <li className="flex justify-between">
+                      <span>營造成本（常規值）</span>
+                      <span className="font-medium">{CONSTRUCTION_COST_PER_PING} 萬 / 坪</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>管銷費用</span>
+                      <span className="font-medium">
+                        營造成本 × {Math.round((MANAGEMENT_SALES_MULTIPLIER - 1) * 100)}%
+                      </span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>開發利潤</span>
+                      <span className="font-medium">{Math.round((PROFIT_MULTIPLIER - 1) * 100)}%</span>
+                    </li>
+                    <li>
+                      <div className="flex justify-between">
+                        <span>免計容積倍率</span>
+                        <span className="font-medium">{EXEMPT_FLOOR_AREA_MULTIPLIER} 倍</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400">
+                        （如陽台、屋頂突出物、機電設備、法定停車位等）
+                      </p>
+                    </li>
+                  </ul>
+                  <p className="mt-1.5 pt-1.5 border-t border-slate-100 text-[10px] text-slate-400">
+                    未計入獎勵容積；臨路寬僅供參考，未進入公式。本試算採常規參數之初步估算，實際開發應由專業人員依個案調整。
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 附近 3km 預售建案售價比較 */}
           {result && (
