@@ -308,6 +308,7 @@ export default function Home() {
             onClear={() => setLocated(null)}
             pickedZone={pickedZone}
             presale={presale}
+            landSales={filtered}
             mobileFullScreen={mobileLandEvalView === "eval"}
             onMobileBack={() => setMobileLandEvalView("map")}
             onCompareRadiusChange={setCompareCircle}

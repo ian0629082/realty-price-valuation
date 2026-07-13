@@ -397,6 +397,142 @@ export function nearbyPresaleStats(
   return { count: prices.length, median, min: prices[0], max: prices[prices.length - 1] };
 }
 
+// ── 決策參考（土地評估試算的風險判斷）───────────────────────────────────────
+// 把試算數字轉成可讀的判斷句，讓試算結果從「資料展示」升級為「評估輔助」。
+// 三個訊號：①推估售價 vs 附近預售中位數 ②土地買價 vs 半徑內土地成交分位 ③預售實登 vs 開價。
+// 門檻為經驗值，僅供初判參考，非投資建議。
+
+export type AdviceLevel = "risk" | "warn" | "ok" | "info";
+
+export interface DecisionAdvice {
+  level: AdviceLevel;
+  text: string;
+}
+
+export interface NearbyLandSaleStats {
+  count: number; // 半徑內非特殊交易、有單價的土地成交筆數
+  median: number; // 單價中位數（萬 / 坪）
+  q3: number; // 第三四分位（萬 / 坪）
+}
+
+// 參考點半徑內的土地成交單價分位統計（排除特殊交易，避免親友/持分交易拉偏分位）
+export function nearbyLandSaleStats(
+  landSales: Property[],
+  refLat: number,
+  refLng: number,
+  radiusKm: number
+): NearbyLandSaleStats | null {
+  const prices = landSales
+    .filter(
+      (p) =>
+        !p.sale?.isSpecialTransaction &&
+        distanceKm(refLat, refLng, p.lat, p.lng) <= radiusKm
+    )
+    .map((p) => saleUnitPrice(p))
+    .filter((v): v is number => v != null && v > 0)
+    .sort((a, b) => a - b);
+  if (prices.length === 0) return null;
+  return {
+    count: prices.length,
+    median: quantile(prices, 0.5),
+    q3: quantile(prices, 0.75),
+  };
+}
+
+// 售價偏離門檻（%）：高於中位數超過 RISK 視為去化風險偏高，超過 WARN 需留意
+const SALE_PRICE_RISK_PCT = 15;
+const SALE_PRICE_WARN_PCT = 5;
+// 分位判斷最少樣本數：低於此數統計不具參考性，不出判斷
+const LAND_STATS_MIN_COUNT = 5;
+// 實登 vs 開價：實登中位數低於開價中位數超過此 % 才提示保守估算
+const ACTUAL_VS_LISTED_GAP_PCT = 5;
+const ACTUAL_VS_LISTED_MIN_COUNT = 3;
+
+/**
+ * 依試算結果與周邊行情產生決策參考判斷。
+ * @param estimatedSalePricePerPing 試算推估售價（萬 / 坪）
+ * @param landPricePerPing          使用者輸入的土地買價（萬 / 坪）
+ * @param presaleStats              附近預售建案開價統計（可為 null）
+ * @param presaleList               附近預售建案清單（開價＋實登，用於保守估算提示）
+ * @param landStats                 附近土地成交分位統計（可為 null）
+ * @param landRadiusKm              土地成交統計半徑，僅用於文案顯示
+ */
+export function buildDecisionAdvice(params: {
+  estimatedSalePricePerPing: number;
+  landPricePerPing: number;
+  presaleStats: NearbyPresaleStats | null;
+  presaleList: NearbyPresaleItem[];
+  landStats: NearbyLandSaleStats | null;
+  landRadiusKm: number;
+}): DecisionAdvice[] {
+  const advice: DecisionAdvice[] = [];
+  const { estimatedSalePricePerPing, landPricePerPing, presaleStats, presaleList, landStats, landRadiusKm } = params;
+
+  // ① 推估售價 vs 附近預售建案中位數
+  if (presaleStats) {
+    const pct = ((estimatedSalePricePerPing - presaleStats.median) / presaleStats.median) * 100;
+    const abs = Math.abs(pct).toFixed(1);
+    if (pct > SALE_PRICE_RISK_PCT) {
+      advice.push({
+        level: "risk",
+        text: `預計售價高於附近建案中位數 ${abs}%，去化風險偏高，建議重新檢視土地買價或成本假設`,
+      });
+    } else if (pct > SALE_PRICE_WARN_PCT) {
+      advice.push({
+        level: "warn",
+        text: `預計售價高於附近建案中位數 ${abs}%，需留意去化速度與產品定位`,
+      });
+    } else if (pct >= -SALE_PRICE_WARN_PCT) {
+      advice.push({
+        level: "ok",
+        text: `預計售價與附近建案中位數相當（差距 ${abs}%），落在區域行情之內`,
+      });
+    } else {
+      advice.push({
+        level: "ok",
+        text: `預計售價低於附近建案中位數 ${abs}%，價格具市場競爭力`,
+      });
+    }
+  }
+
+  // ② 土地買價 vs 半徑內土地成交分位（樣本不足時不出判斷）
+  if (landStats && landStats.count >= LAND_STATS_MIN_COUNT) {
+    if (landPricePerPing >= landStats.q3) {
+      advice.push({
+        level: "warn",
+        text: `土地買價落在 ${landRadiusKm}km 內土地成交 Q3（${landStats.q3.toFixed(1)} 萬/坪）以上，屬區域高價，需審慎評估`,
+      });
+    } else if (landPricePerPing >= landStats.median) {
+      advice.push({
+        level: "info",
+        text: `土地買價介於 ${landRadiusKm}km 內土地成交中位數（${landStats.median.toFixed(1)} 萬/坪）與 Q3 之間，屬區域中上價位`,
+      });
+    } else {
+      advice.push({
+        level: "ok",
+        text: `土地買價低於 ${landRadiusKm}km 內土地成交中位數（${landStats.median.toFixed(1)} 萬/坪），取得成本相對有利`,
+      });
+    }
+  }
+
+  // ③ 周邊預售實登 vs 開價：實登明顯偏低時提示以實登為保守基準
+  const gaps = presaleList
+    .filter((item) => item.actualUnitPrice != null && item.unitPrice > 0)
+    .map((item) => ((item.actualUnitPrice! - item.unitPrice) / item.unitPrice) * 100)
+    .sort((a, b) => a - b);
+  if (gaps.length >= ACTUAL_VS_LISTED_MIN_COUNT) {
+    const medianGap = quantile(gaps, 0.5);
+    if (medianGap <= -ACTUAL_VS_LISTED_GAP_PCT) {
+      advice.push({
+        level: "info",
+        text: `周邊預售實登均價低於開價約 ${Math.abs(medianGap).toFixed(1)}%，建議以實登行情為保守估算基準`,
+      });
+    }
+  }
+
+  return advice;
+}
+
 // ── 土地價格評估（見 land_price_evaluation.md）──────────────────────────────
 // 容積率沿用專案既有欄位 `Property.zoneFAR`（來源：都市計畫分區 KML）。
 // 資料中維持原始數值，例如 300 代表 300%；只有在計算公式中才會 / 100。

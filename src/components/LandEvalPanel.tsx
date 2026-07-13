@@ -2,11 +2,27 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { calculateLandPrice, nearbyPresaleStats, nearbyPresaleList } from "@/lib/price";
+import {
+  calculateLandPrice,
+  nearbyPresaleStats,
+  nearbyPresaleList,
+  nearbyLandSaleStats,
+  buildDecisionAdvice,
+  AdviceLevel,
+} from "@/lib/price";
 import { Property } from "@/types/property";
 import ParcelLocator, { LocatedParcel } from "@/components/ParcelLocator";
 
 const COMPARE_RADIUS_KM = 1; // 附近建案售價比較半徑
+const LAND_COMPARE_RADIUS_KM = 2; // 土地成交分位比較半徑（與「只看土地成交」總覽統計一致）
+
+// 決策參考標籤的燈號樣式：risk 紅／warn 黃／ok 綠／info 藍
+const ADVICE_STYLE: Record<AdviceLevel, { dot: string; text: string }> = {
+  risk: { dot: "bg-rose-500", text: "text-rose-700" },
+  warn: { dot: "bg-amber-500", text: "text-amber-700" },
+  ok: { dot: "bg-emerald-500", text: "text-emerald-700" },
+  info: { dot: "bg-sky-500", text: "text-sky-700" },
+};
 
 interface Props {
   located?: LocatedParcel | null; // 地號定位結果，用於自動帶入容積率
@@ -21,6 +37,7 @@ interface Props {
     nonce: number;
   } | null; // 右鍵反查分區，帶入容積率＋座標
   presale?: Property[]; // 全區預售建案，供 3km 售價比較
+  landSales?: Property[]; // 土地成交資料，供決策參考的買價分位判斷
   mobileFullScreen?: boolean; // 手機版：以全螢幕分頁取代浮動卡片（見「地圖／試算」切換）
   onMobileBack?: () => void; // 手機版：從試算全螢幕返回地圖
   onCompareRadiusChange?: (circle: { lat: number; lng: number; km: number } | null) => void; // 試算結果出現時，通知地圖畫出比較半徑圈
@@ -50,6 +67,7 @@ export default function LandEvalPanel({
   onClear,
   pickedZone,
   presale,
+  landSales,
   mobileFullScreen,
   onMobileBack,
   onCompareRadiusChange,
@@ -154,6 +172,29 @@ export default function LandEvalPanel({
         : [],
     [refPoint, presale]
   );
+
+  // 附近土地成交分位統計（排除特殊交易），供決策參考的買價位階判斷
+  const landStats = useMemo(
+    () =>
+      refPoint && landSales && landSales.length
+        ? nearbyLandSaleStats(landSales, refPoint.lat, refPoint.lng, LAND_COMPARE_RADIUS_KM)
+        : null,
+    [refPoint, landSales]
+  );
+
+  // 決策參考：試算結果＋周邊行情 → 風險判斷句（紅/黃/綠/藍燈號）
+  const advice = useMemo(() => {
+    const price = parseFloat(landPrice);
+    if (!result || Number.isNaN(price) || price <= 0) return [];
+    return buildDecisionAdvice({
+      estimatedSalePricePerPing: result.estimatedSalePricePerPing,
+      landPricePerPing: price,
+      presaleStats: nearby,
+      presaleList: nearbyList,
+      landStats,
+      landRadiusKm: LAND_COMPARE_RADIUS_KM,
+    });
+  }, [result, landPrice, nearby, nearbyList, landStats]);
 
   // 點擊清單與觸發按鈕以外的地方時自動收合
   useEffect(() => {
@@ -509,6 +550,28 @@ export default function LandEvalPanel({
                   );
                 })()
               )}
+            </div>
+          )}
+
+          {/* 決策參考：把試算與周邊行情轉成風險判斷句，僅供初判參考 */}
+          {result && advice.length > 0 && (
+            <div className="mt-2 rounded border border-slate-200 bg-slate-50 p-2.5 text-sm">
+              <p className="font-medium text-slate-800 mb-1.5">📋 決策參考</p>
+              <ul className="space-y-1.5">
+                {advice.map((a, i) => (
+                  <li key={i} className="flex gap-1.5">
+                    <span
+                      className={`mt-1 h-2 w-2 shrink-0 rounded-full ${ADVICE_STYLE[a.level].dot}`}
+                    />
+                    <span className={`text-xs leading-snug ${ADVICE_STYLE[a.level].text}`}>
+                      {a.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1.5 text-[10px] text-gray-400">
+                依固定假設與周邊統計自動產生，僅供初步判斷參考，非投資建議
+              </p>
             </div>
           )}
           </>
