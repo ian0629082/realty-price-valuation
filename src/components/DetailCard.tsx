@@ -9,10 +9,20 @@ interface Props {
   onClose: () => void;
 }
 
-// 卡片內小節標題（灰底小標籤，取代原本純文字 h4，呼應 MarketStatsPanel 的分組語言）
-function SectionLabel({ children }: { children: React.ReactNode }) {
+// 各小節的色系：買賣＝藍、租賃＝綠、商號＝琥珀，讓不同性質資料一眼可辨。
+// label：標籤配色；box：整段包框的淡色底＋外框。
+type Tone = "slate" | "blue" | "emerald" | "amber";
+const SECTION_TONES: Record<Tone, { label: string; box: string }> = {
+  slate: { label: "text-slate-500 bg-slate-100", box: "" },
+  blue: { label: "text-blue-700 bg-blue-100", box: "bg-blue-50/70 border border-blue-100" },
+  emerald: { label: "text-emerald-700 bg-emerald-100", box: "bg-emerald-50/70 border border-emerald-100" },
+  amber: { label: "text-amber-800 bg-amber-100", box: "bg-amber-50/70 border border-amber-100" },
+};
+
+// 卡片內小節標題（色底小標籤，取代原本純文字 h4，呼應 MarketStatsPanel 的分組語言）
+function SectionLabel({ children, tone = "slate" }: { children: React.ReactNode; tone?: Tone }) {
   return (
-    <p className="text-[11px] font-medium text-slate-500 bg-slate-100 inline-block rounded-full px-2 py-0.5">
+    <p className={`text-[11px] font-medium inline-block rounded-full px-2 py-0.5 ${SECTION_TONES[tone].label}`}>
       {children}
     </p>
   );
@@ -177,8 +187,8 @@ export default function DetailCard({ property, onClose }: Props) {
       </div>
 
       {property.sale && (
-        <div className="mt-3">
-          <SectionLabel>買賣成交</SectionLabel>
+        <div className={`mt-3 rounded-lg p-2.5 ${SECTION_TONES.blue.box}`}>
+          <SectionLabel tone="blue">買賣成交</SectionLabel>
           <p className="text-sm text-slate-800 mt-1">
             總價 {property.sale.price.toLocaleString()} 萬｜{property.sale.date}｜{property.sale.transactionType}｜
             {property.type === "土地" ? "成交土地面積" : "成交建坪"} {property.sale.buildingArea}坪
@@ -187,8 +197,8 @@ export default function DetailCard({ property, onClose }: Props) {
       )}
 
       {property.rents.length > 0 && (
-        <div className="mt-3">
-          <SectionLabel>租賃成交</SectionLabel>
+        <div className={`mt-3 rounded-lg p-2.5 ${SECTION_TONES.emerald.box}`}>
+          <SectionLabel tone="emerald">租賃成交</SectionLabel>
           {property.rents.map((r, i) => (
             <p key={i} className="text-sm text-slate-800 mt-1">
               {r.leaseStart}~{r.leaseEnd}｜{r.floor}｜月租 {r.monthlyRent.toLocaleString()} 元
@@ -205,8 +215,8 @@ export default function DetailCard({ property, onClose }: Props) {
       )}
 
       {property.businesses.length > 0 && (
-        <div className="mt-3">
-          <SectionLabel>
+        <div className={`mt-3 rounded-lg p-2.5 ${SECTION_TONES.amber.box}`}>
+          <SectionLabel tone="amber">
             營業中商號（{property.businessCount ?? property.businesses.length} 家）
           </SectionLabel>
           {property.businesses.map((b, i) => (
