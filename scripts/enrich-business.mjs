@@ -38,7 +38,7 @@ function toHalf(s) {
 // 正規化地址為 join key（區＋路段巷弄＋號）
 function keyOf(addrRaw) {
   let a = toHalf(addrRaw).replace(/^台中市|^臺中市/, "");
-  a = a.replace(/^(大里區|南屯區|南區|東區|西區|北區|中區)([一-鿿]{1,4}里)/, "$1");
+  a = a.replace(/^(大里區|南屯區|西屯區|南區|東區|西區|北區|中區)([一-鿿]{1,4}里)/, "$1");
   const i = a.indexOf("號");
   if (i < 0) return null;
   return a.slice(0, i + 1).replace(/[之―－\-]/g, "-");

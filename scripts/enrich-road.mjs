@@ -18,14 +18,12 @@
 
 import fs from "node:fs";
 import proj4 from "proj4";
-import { OUTPUT_FILE } from "./config.mjs";
+import { OUTPUT_FILE, TARGET_DISTRICTS } from "./config.mjs";
 
 const CACHE_FILE = "data/geocode-cache.json";
 const CSV_FILE = "data/road/taichung-road-width.csv";
 const CSV_URL =
   "https://newdatacenter.taichung.gov.tw/api/v1/no-auth/resource.download?rid=c807c4ef-1942-4341-abbc-883fde09f8b2";
-
-const TARGET_DISTRICTS = ["南區", "大里區", "南屯區"]; // 與 config.TARGET_DISTRICTS 一致
 const SNAP_MAX_M = 100; // 最近道路超過此距離視為無臨路資料
 const MEDIAN_WIDTH_M = 30; // 路寬 >= 此值推估有分隔島
 
