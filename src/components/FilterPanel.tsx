@@ -22,6 +22,7 @@ interface Props {
   filters: Filters;
   onChange: (filters: Filters) => void;
   locator?: React.ReactNode; // 地號定位（顯示於檢視模式與縣市之間）
+  communitySearch?: React.ReactNode; // 預售屋社區搜尋（顯示於區域下方）
   children?: React.ReactNode;
   mobileOpen?: boolean; // 手機版：是否展開為滑入式抽屜
   onMobileClose?: () => void;
@@ -47,6 +48,7 @@ export default function FilterPanel({
   filters,
   onChange,
   locator,
+  communitySearch,
   children,
   mobileOpen,
   onMobileClose,
@@ -128,6 +130,9 @@ export default function FilterPanel({
             ))}
           </select>
         </div>
+
+        {/* 預售屋社區搜尋（僅預售屋模式帶入） */}
+        {communitySearch}
       </div>
 
       {/* 圖例 */}

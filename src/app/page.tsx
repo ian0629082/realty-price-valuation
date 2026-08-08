@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Property } from "@/types/property";
 import FilterPanel, { Filters } from "@/components/FilterPanel";
+import CommunitySearch, { CommunityOption } from "@/components/CommunitySearch";
 import MarketFilters from "@/components/MarketFilters";
 import DetailCard from "@/components/DetailCard";
 import MarketStatsPanel from "@/components/MarketStatsPanel";
@@ -69,6 +70,10 @@ export default function Home() {
   const [mobileLandEvalView, setMobileLandEvalView] = useState<"map" | "eval">("map");
   // 切換縣市／區域時，地圖飛到該區域範圍（nonce 讓重複選同一區也會觸發）
   const [focusBounds, setFocusBounds] = useState<(MapBounds & { nonce: number }) | null>(null);
+  // 預售屋社區搜尋選定建案時，地圖飛到單點（nonce 讓重選同一建案也會觸發）
+  const [focusPoint, setFocusPoint] = useState<{ lat: number; lng: number; nonce: number } | null>(
+    null
+  );
   const prevAreaRef = useRef({ city: filters.city, district: filters.district });
 
   useEffect(() => {
@@ -123,6 +128,29 @@ export default function Home() {
     if (filters.city === "全部") return Object.values(DISTRICTS).flat();
     return DISTRICTS[filters.city] ?? [];
   }, [filters.city]);
+
+  // 預售屋社區搜尋選項：由已載入的預售建案派生（properties 已依區域篩選），
+  // 依區域、名稱排序，供左側「社區」欄下拉／輸入搜尋。
+  const communities = useMemo<CommunityOption[]>(() => {
+    if (filters.viewMode !== "presale") return [];
+    return properties
+      .filter((p) => p.presale?.buildName)
+      .map((p) => ({
+        id: p.id,
+        name: p.presale!.buildName,
+        district: p.district,
+        lat: p.lat,
+        lng: p.lng,
+      }))
+      .sort((a, b) => a.district.localeCompare(b.district) || a.name.localeCompare(b.name));
+  }, [properties, filters.viewMode]);
+
+  // 選定社區：開啟資料卡並讓地圖飛到該建案
+  const handleSelectCommunity = (opt: CommunityOption) => {
+    const p = properties.find((x) => x.id === opt.id);
+    if (p) setSelected(p);
+    setFocusPoint({ lat: opt.lat, lng: opt.lng, nonce: Date.now() });
+  };
 
   // 交易條件篩選（時間/單價/面積）後的物件
   const filtered = useMemo(
@@ -196,6 +224,15 @@ export default function Home() {
         cities={CITIES}
         districts={districts}
         filters={filters}
+        communitySearch={
+          filters.viewMode === "presale" ? (
+            <CommunitySearch
+              key={`${filters.city}-${filters.district}`}
+              options={communities}
+              onSelect={handleSelectCommunity}
+            />
+          ) : undefined
+        }
         mobileOpen={mobileFilterOpen}
         onMobileClose={() => setMobileFilterOpen(false)}
         onChange={(f) => {
@@ -263,6 +300,7 @@ export default function Home() {
           colorFor={scale.colorFor}
           onBoundsChange={setBounds}
           focusBounds={focusBounds}
+          focusPoint={focusPoint}
           located={located}
           showCadastral={filters.viewMode === "land-eval" || filters.viewMode === "land-sale"}
           onPickZone={
