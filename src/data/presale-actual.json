@@ -1,12 +1,37 @@
 {
+  "和宜好好": {
+    "name": "和宜好好",
+    "avgUnitPrice": 43,
+    "count": 40
+  },
+  "國雄無?": {
+    "name": "國雄無?",
+    "avgUnitPrice": 59.5,
+    "count": 214
+  },
   "鉅森?": {
     "name": "鉅森?",
     "avgUnitPrice": 57.2,
     "count": 2
   },
+  "遠雄純寓": {
+    "name": "遠雄純寓",
+    "avgUnitPrice": 72.3,
+    "count": 45
+  },
   "茵之伴": {
     "name": "茵之伴",
     "avgUnitPrice": 48.3,
+    "count": 10
+  },
+  "帝闊大玥": {
+    "name": "帝闊大玥",
+    "avgUnitPrice": 34.5,
+    "count": 5
+  },
+  "東方精英Ⅱ": {
+    "name": "東方精英Ⅱ",
+    "avgUnitPrice": 61.5,
     "count": 10
   },
   "清森二期": {
@@ -19,10 +44,30 @@
     "avgUnitPrice": 49.1,
     "count": 94
   },
+  "市政新銳": {
+    "name": "市政新銳",
+    "avgUnitPrice": 64.1,
+    "count": 166
+  },
+  "懋榮非等閑": {
+    "name": "懋榮非等閑",
+    "avgUnitPrice": 62.4,
+    "count": 37
+  },
+  "寶輝世紀莊園": {
+    "name": "寶輝世紀莊園",
+    "avgUnitPrice": 69,
+    "count": 29
+  },
   "昂峰聚羨岱": {
     "name": "昂峰聚羨岱",
     "avgUnitPrice": 38.1,
     "count": 39
+  },
+  "VVS1": {
+    "name": "VVS1",
+    "avgUnitPrice": 59.7,
+    "count": 141
   },
   "仁美至善": {
     "name": "仁美至善",
@@ -31,8 +76,18 @@
   },
   "登陽大地悅章": {
     "name": "登陽大地悅章",
-    "avgUnitPrice": 43.8,
-    "count": 261
+    "avgUnitPrice": 43.9,
+    "count": 265
+  },
+  "鉑金愛悅": {
+    "name": "鉑金愛悅",
+    "avgUnitPrice": 60.4,
+    "count": 110
+  },
+  "惟上": {
+    "name": "惟上",
+    "avgUnitPrice": 77.7,
+    "count": 25
   },
   "富宇世界花園": {
     "name": "富宇世界花園",
@@ -42,17 +97,22 @@
   "君睿": {
     "name": "君睿",
     "avgUnitPrice": 58.3,
-    "count": 72
+    "count": 74
   },
   "昌祐雲之境": {
     "name": "昌祐雲之境",
     "avgUnitPrice": 44.1,
-    "count": 234
+    "count": 236
+  },
+  "雙橡園2279": {
+    "name": "雙橡園2279",
+    "avgUnitPrice": 70.2,
+    "count": 3
   },
   "鉅森匯": {
     "name": "鉅森匯",
-    "avgUnitPrice": 55.7,
-    "count": 71
+    "avgUnitPrice": 56.1,
+    "count": 77
   },
   "麗明四季": {
     "name": "麗明四季",
@@ -74,15 +134,25 @@
     "avgUnitPrice": 45.3,
     "count": 5
   },
+  "時代海德": {
+    "name": "時代海德",
+    "avgUnitPrice": 62.9,
+    "count": 49
+  },
   "品微楓": {
     "name": "品微楓",
-    "avgUnitPrice": 36.6,
-    "count": 17
+    "avgUnitPrice": 37.5,
+    "count": 19
+  },
+  "泉宇雲鼎": {
+    "name": "泉宇雲鼎",
+    "avgUnitPrice": 69.4,
+    "count": 8
   },
   "昌祐幸福大里": {
     "name": "昌祐幸福大里",
-    "avgUnitPrice": 28.9,
-    "count": 190
+    "avgUnitPrice": 29,
+    "count": 192
   },
   "勝美敦美": {
     "name": "勝美敦美",
@@ -109,6 +179,11 @@
     "avgUnitPrice": 67.9,
     "count": 1
   },
+  "豐蒔": {
+    "name": "豐蒔",
+    "avgUnitPrice": 76.6,
+    "count": 35
+  },
   "亨都新富": {
     "name": "亨都新富",
     "avgUnitPrice": 51.4,
@@ -122,12 +197,22 @@
   "國雄集團仰德大道": {
     "name": "國雄集團仰德大道",
     "avgUnitPrice": 34.1,
-    "count": 28
+    "count": 29
   },
   "工妍院Ⅱ": {
     "name": "工妍院Ⅱ",
     "avgUnitPrice": 36.3,
     "count": 8
+  },
+  "豐邑PARKONE": {
+    "name": "豐邑PARK ONE",
+    "avgUnitPrice": 74.2,
+    "count": 25
+  },
+  "台灣隱賦": {
+    "name": "台灣隱賦",
+    "avgUnitPrice": 65.3,
+    "count": 283
   },
   "菁科2MAX": {
     "name": "菁科2MAX",
@@ -139,10 +224,35 @@
     "avgUnitPrice": 46.2,
     "count": 5
   },
+  "TWINPARK": {
+    "name": "TWIN PARK",
+    "avgUnitPrice": 62.3,
+    "count": 83
+  },
   "日興興富III": {
     "name": "日興-興富III",
     "avgUnitPrice": 52,
     "count": 26
+  },
+  "遠雄藝舍": {
+    "name": "遠雄藝舍",
+    "avgUnitPrice": 66.1,
+    "count": 84
+  },
+  "坤聯發中科匯": {
+    "name": "坤聯發中科匯",
+    "avgUnitPrice": 54.6,
+    "count": 46
+  },
+  "秋紅谷之森": {
+    "name": "秋紅谷之森",
+    "avgUnitPrice": 64.1,
+    "count": 18
+  },
+  "理仁奕舍": {
+    "name": "理仁奕舍",
+    "avgUnitPrice": 62.2,
+    "count": 15
   },
   "美術元越": {
     "name": "美術元越",
@@ -154,6 +264,21 @@
     "avgUnitPrice": 48.6,
     "count": 126
   },
+  "懋榮花雨歇": {
+    "name": "懋榮花雨歇",
+    "avgUnitPrice": 48.6,
+    "count": 38
+  },
+  "寶輝國際莊園": {
+    "name": "寶輝國際莊園",
+    "avgUnitPrice": 69.4,
+    "count": 20
+  },
+  "花果山": {
+    "name": "花果山",
+    "avgUnitPrice": 57.4,
+    "count": 57
+  },
   "佳泰大方": {
     "name": "佳泰大方",
     "avgUnitPrice": 46.7,
@@ -163,6 +288,11 @@
     "name": "敘山行路",
     "avgUnitPrice": 42.9,
     "count": 157
+  },
+  "台中TOP1環球經貿中心": {
+    "name": "台中TOP1環球經貿中心",
+    "avgUnitPrice": 42.2,
+    "count": 4
   },
   "余自慢": {
     "name": "余自慢",
@@ -178,6 +308,11 @@
     "name": "長安大墩",
     "avgUnitPrice": 60.2,
     "count": 5
+  },
+  "寶輝SKYTOWER": {
+    "name": "寶輝SKY TOWER",
+    "avgUnitPrice": 77.8,
+    "count": 2
   },
   "大樁園": {
     "name": "大樁園",
@@ -209,15 +344,40 @@
     "avgUnitPrice": 46.4,
     "count": 63
   },
+  "INVIVA": {
+    "name": "IN VIVA",
+    "avgUnitPrice": 43.1,
+    "count": 94
+  },
   "語山簷": {
     "name": "語山簷",
     "avgUnitPrice": 61.7,
     "count": 4
   },
+  "淳謙": {
+    "name": "淳謙",
+    "avgUnitPrice": 43.4,
+    "count": 3
+  },
+  "泰御天鑄II": {
+    "name": "泰御天鑄II",
+    "avgUnitPrice": 57.1,
+    "count": 112
+  },
+  "升之泰": {
+    "name": "升之泰",
+    "avgUnitPrice": 46,
+    "count": 7
+  },
   "元城上萃": {
     "name": "元城上萃",
     "avgUnitPrice": 44,
     "count": 222
+  },
+  "市政序": {
+    "name": "市政序",
+    "avgUnitPrice": 55.2,
+    "count": 1
   },
   "睦上田": {
     "name": "睦上田",
@@ -249,6 +409,11 @@
     "avgUnitPrice": 66.8,
     "count": 3
   },
+  "東方精英": {
+    "name": "東方精英",
+    "avgUnitPrice": 61,
+    "count": 1
+  },
   "藍圖講義": {
     "name": "藍圖講義",
     "avgUnitPrice": 42.6,
@@ -279,6 +444,21 @@
     "avgUnitPrice": 40.9,
     "count": 36
   },
+  "允將一著": {
+    "name": "允將一著",
+    "avgUnitPrice": 63.3,
+    "count": 86
+  },
+  "磐鈺雲詠": {
+    "name": "磐鈺雲詠",
+    "avgUnitPrice": 60.8,
+    "count": 74
+  },
+  "雍?一方": {
+    "name": "雍?一方",
+    "avgUnitPrice": 60.3,
+    "count": 216
+  },
   "宏台敦旭": {
     "name": "宏台敦旭",
     "avgUnitPrice": 56.2,
@@ -292,22 +472,57 @@
   "科研?星": {
     "name": "科研?星",
     "avgUnitPrice": 39.5,
-    "count": 108
+    "count": 111
   },
   "鼎義國圖館": {
     "name": "鼎義國圖館",
     "avgUnitPrice": 46.1,
     "count": 40
   },
+  "豐禾文華漾": {
+    "name": "豐禾文華漾",
+    "avgUnitPrice": 52.5,
+    "count": 16
+  },
+  "續森": {
+    "name": "續森",
+    "avgUnitPrice": 83.1,
+    "count": 31
+  },
+  "親家中央公園": {
+    "name": "親家中央公園",
+    "avgUnitPrice": 82.9,
+    "count": 447
+  },
   "大閱恆好": {
     "name": "大閱恆好",
     "avgUnitPrice": 46.3,
     "count": 38
   },
+  "沅林?清麒": {
+    "name": "沅林?清麒",
+    "avgUnitPrice": 65.4,
+    "count": 32
+  },
+  "謙成CBD": {
+    "name": "謙成CBD",
+    "avgUnitPrice": 37.9,
+    "count": 1
+  },
   "國泰THEPARK": {
     "name": "國泰THE PARK",
     "avgUnitPrice": 108,
     "count": 1
+  },
+  "仰星殿": {
+    "name": "仰星殿",
+    "avgUnitPrice": 61.3,
+    "count": 1
+  },
+  "V市政": {
+    "name": "V市政",
+    "avgUnitPrice": 69.9,
+    "count": 53
   },
   "有鉅THEONE": {
     "name": "有鉅 THE ONE",
@@ -329,15 +544,30 @@
     "avgUnitPrice": 36.9,
     "count": 221
   },
-  "沅林?清麒": {
-    "name": "沅林?清麒",
-    "avgUnitPrice": 64.1,
-    "count": 2
+  "鉅陞V市政": {
+    "name": "鉅陞V市政",
+    "avgUnitPrice": 68.5,
+    "count": 1
+  },
+  "紀汎希": {
+    "name": "紀汎希",
+    "avgUnitPrice": 73.7,
+    "count": 329
+  },
+  "市政1號院": {
+    "name": "市政1號院",
+    "avgUnitPrice": 50.9,
+    "count": 1
   },
   "一邸": {
     "name": "一邸",
     "avgUnitPrice": 46.3,
     "count": 76
+  },
+  "大鑫知寓": {
+    "name": "大鑫知寓",
+    "avgUnitPrice": 57.4,
+    "count": 4
   },
   "大漁仁美": {
     "name": "大漁仁美",
@@ -349,10 +579,35 @@
     "avgUnitPrice": 58,
     "count": 10
   },
+  "成真ComeTrue": {
+    "name": "成真 Come True",
+    "avgUnitPrice": 63.3,
+    "count": 33
+  },
   "市政序2": {
     "name": "市政序2",
     "avgUnitPrice": 56.7,
     "count": 2
+  },
+  "聯聚中維大廈": {
+    "name": "聯聚中維大廈",
+    "avgUnitPrice": 70.5,
+    "count": 133
+  },
+  "鈺陞馥花園": {
+    "name": "鈺陞馥花園",
+    "avgUnitPrice": 42,
+    "count": 14
+  },
+  "市政愛悅": {
+    "name": "市政愛悅",
+    "avgUnitPrice": 40,
+    "count": 3
+  },
+  "UNI經貿": {
+    "name": "UNI-經貿",
+    "avgUnitPrice": 61.2,
+    "count": 22
   },
   "崇恩工學賦": {
     "name": "崇恩工學賦",
@@ -361,8 +616,13 @@
   },
   "麗晨山哼歌": {
     "name": "麗晨山哼歌",
-    "avgUnitPrice": 61.4,
-    "count": 88
+    "avgUnitPrice": 61.5,
+    "count": 92
+  },
+  "RICHONE紐約館": {
+    "name": "RICH ONE紐約館",
+    "avgUnitPrice": 59.9,
+    "count": 13
   },
   "鼎泰森美圖鼎美": {
     "name": "鼎泰森美圖-鼎美",
@@ -382,7 +642,7 @@
   "富宇市政大道": {
     "name": "富宇市政大道",
     "avgUnitPrice": 52.1,
-    "count": 424
+    "count": 425
   },
   "謙謙所在": {
     "name": "謙謙所在",
@@ -391,18 +651,33 @@
   },
   "華相楓PARK": {
     "name": "華相楓PARK",
-    "avgUnitPrice": 48.5,
-    "count": 8
+    "avgUnitPrice": 48.9,
+    "count": 9
   },
   "彧見": {
     "name": "彧見",
     "avgUnitPrice": 50.3,
     "count": 18
   },
+  "雙橡園4117": {
+    "name": "雙橡園4117",
+    "avgUnitPrice": 75,
+    "count": 363
+  },
+  "允將一朗": {
+    "name": "允將一朗",
+    "avgUnitPrice": 61.8,
+    "count": 20
+  },
   "昂峰敘詠隆": {
     "name": "昂峰敘詠隆",
     "avgUnitPrice": 42.5,
     "count": 54
+  },
+  "遠雄琉蘊": {
+    "name": "遠雄琉蘊",
+    "avgUnitPrice": 80.5,
+    "count": 279
   },
   "精銳SkyOne": {
     "name": "精銳SkyOne",
@@ -416,13 +691,18 @@
   },
   "語文心": {
     "name": "語文心",
-    "avgUnitPrice": 52.9,
-    "count": 132
+    "avgUnitPrice": 53.5,
+    "count": 138
   },
   "臻鑫城隱5期": {
     "name": "臻鑫城隱5期",
     "avgUnitPrice": 35.1,
     "count": 1
+  },
+  "雲頂": {
+    "name": "雲頂",
+    "avgUnitPrice": 72,
+    "count": 548
   },
   "勝美琚": {
     "name": "勝美琚",
@@ -462,12 +742,17 @@
   "青山旭": {
     "name": "青山旭",
     "avgUnitPrice": 70.8,
-    "count": 79
+    "count": 81
   },
   "惠宇拾山": {
     "name": "惠宇拾山",
     "avgUnitPrice": 64,
     "count": 95
+  },
+  "寶輝THETOWER": {
+    "name": "寶輝THE TOWER",
+    "avgUnitPrice": 68.8,
+    "count": 109
   },
   "美群臻寶": {
     "name": "美群臻寶",
@@ -477,22 +762,42 @@
   "澔宇里禾": {
     "name": "澔宇里禾",
     "avgUnitPrice": 37.1,
-    "count": 14
+    "count": 15
+  },
+  "福星匯": {
+    "name": "福星匯",
+    "avgUnitPrice": 63.1,
+    "count": 50
   },
   "昂峰謙禾": {
     "name": "昂峰謙禾",
     "avgUnitPrice": 45.8,
     "count": 107
   },
+  "東松大鉅": {
+    "name": "東松大鉅",
+    "avgUnitPrice": 40.8,
+    "count": 29
+  },
   "中陽旭月": {
     "name": "中陽旭月",
     "avgUnitPrice": 65.3,
     "count": 13
   },
+  "囍御水湳": {
+    "name": "囍御水湳",
+    "avgUnitPrice": 73,
+    "count": 64
+  },
   "新葉莊": {
     "name": "新葉莊",
     "avgUnitPrice": 39.1,
     "count": 2
+  },
+  "逢鳴日向微風": {
+    "name": "逢鳴日向微風",
+    "avgUnitPrice": 64.7,
+    "count": 11
   },
   "工學匯": {
     "name": "工學匯",
@@ -509,15 +814,25 @@
     "avgUnitPrice": 36,
     "count": 8
   },
+  "時間回聲": {
+    "name": "時間回聲",
+    "avgUnitPrice": 54,
+    "count": 23
+  },
   "19Dali": {
     "name": "19Dali",
-    "avgUnitPrice": 35,
-    "count": 65
+    "avgUnitPrice": 34.9,
+    "count": 69
   },
   "躍於": {
     "name": "躍於",
     "avgUnitPrice": 51.7,
     "count": 67
+  },
+  "市政萬象廣場": {
+    "name": "市政萬象廣場",
+    "avgUnitPrice": 71.6,
+    "count": 258
   },
   "鉅虹天麗": {
     "name": "鉅虹天麗",
@@ -539,25 +854,55 @@
     "avgUnitPrice": 51.5,
     "count": 7
   },
+  "天際WONE": {
+    "name": "天際W ONE",
+    "avgUnitPrice": 58.9,
+    "count": 14
+  },
   "厚德大院": {
     "name": "厚德大院",
     "avgUnitPrice": 53.1,
     "count": 7
+  },
+  "逢甲101NO2": {
+    "name": "逢甲101NO.2",
+    "avgUnitPrice": 48.8,
+    "count": 9
   },
   "鉅虹天蒔": {
     "name": "鉅虹天蒔",
     "avgUnitPrice": 65,
     "count": 32
   },
+  "遠雄綠美": {
+    "name": "遠雄綠美",
+    "avgUnitPrice": 79.9,
+    "count": 168
+  },
   "UHouse": {
     "name": "U House",
     "avgUnitPrice": 49.6,
     "count": 47
   },
+  "一青隱": {
+    "name": "一青隱",
+    "avgUnitPrice": 56.1,
+    "count": 10
+  },
+  "華固頂?": {
+    "name": "華固頂?",
+    "avgUnitPrice": 80,
+    "count": 204
+  },
   "國聚之築": {
     "name": "國聚之築",
     "avgUnitPrice": 46.8,
-    "count": 111
+    "count": 112
+  },
+  "允將TST台灣之鑽": {
+    "name": "允將TST台灣之鑽",
+    "avgUnitPrice": 86.7,
+    "count": 43
   },
   "睦昇八玥": {
     "name": "睦昇八玥",
@@ -566,13 +911,23 @@
   },
   "大境雲深": {
     "name": "大境雲深",
-    "avgUnitPrice": 109.3,
-    "count": 2
+    "avgUnitPrice": 114.1,
+    "count": 3
   },
   "五權知鈺": {
     "name": "五權知鈺",
     "avgUnitPrice": 50.7,
     "count": 14
+  },
+  "仲聯海德莊園II": {
+    "name": "仲聯海德莊園II",
+    "avgUnitPrice": 60.1,
+    "count": 4
+  },
+  "當代首馥": {
+    "name": "當代首馥",
+    "avgUnitPrice": 67.5,
+    "count": 306
   },
   "順宇森鄰": {
     "name": "順宇森鄰",
@@ -587,22 +942,57 @@
   "國聚之尚": {
     "name": "國聚之尚",
     "avgUnitPrice": 67.4,
-    "count": 123
+    "count": 126
+  },
+  "蘿曼蘿蘭": {
+    "name": "蘿曼蘿蘭",
+    "avgUnitPrice": 74.2,
+    "count": 406
+  },
+  "寶輝101TheaterSouth": {
+    "name": "寶輝101 Theater South",
+    "avgUnitPrice": 88.4,
+    "count": 124
   },
   "儷豐?上川": {
     "name": "儷豐?上川",
-    "avgUnitPrice": 46.7,
-    "count": 27
+    "avgUnitPrice": 46.8,
+    "count": 28
   },
   "睦唐與樹": {
     "name": "睦唐與樹",
-    "avgUnitPrice": 40.2,
-    "count": 50
+    "avgUnitPrice": 40.3,
+    "count": 51
+  },
+  "麗晨片片山閑": {
+    "name": "麗晨片片山閑",
+    "avgUnitPrice": 72.8,
+    "count": 11
+  },
+  "雙橡園1920": {
+    "name": "雙橡園1920",
+    "avgUnitPrice": 78.4,
+    "count": 114
   },
   "蒔晴": {
     "name": "蒔晴",
     "avgUnitPrice": 50.2,
     "count": 41
+  },
+  "清澄玉境": {
+    "name": "清澄玉境",
+    "avgUnitPrice": 49.3,
+    "count": 2
+  },
+  "鈺陞璞玉": {
+    "name": "鈺陞璞玉",
+    "avgUnitPrice": 46.3,
+    "count": 14
+  },
+  "聯聚方瑞大廈": {
+    "name": "聯聚方瑞大廈",
+    "avgUnitPrice": 82.5,
+    "count": 5
   },
   "侑美謙回": {
     "name": "侑美謙回",
@@ -611,8 +1001,8 @@
   },
   "精銳LEAD": {
     "name": "精銳LEAD",
-    "avgUnitPrice": 69.6,
-    "count": 90
+    "avgUnitPrice": 69.5,
+    "count": 93
   },
   "登陽?涵": {
     "name": "登陽?涵",
@@ -632,17 +1022,22 @@
   "元城生生": {
     "name": "元城生生",
     "avgUnitPrice": 61.7,
-    "count": 96
+    "count": 99
   },
   "豐邑匯禮": {
     "name": "豐邑匯禮",
     "avgUnitPrice": 68,
     "count": 10
   },
+  "裕翔織光": {
+    "name": "裕翔織光",
+    "avgUnitPrice": 69.9,
+    "count": 12
+  },
   "曜精銳": {
     "name": "曜 精銳",
-    "avgUnitPrice": 57.6,
-    "count": 180
+    "avgUnitPrice": 57.7,
+    "count": 192
   },
   "清森好漾2": {
     "name": "清森好漾2",
@@ -656,18 +1051,38 @@
   },
   "信義首豐": {
     "name": "信義首豐",
-    "avgUnitPrice": 59.3,
-    "count": 4
+    "avgUnitPrice": 59.6,
+    "count": 5
+  },
+  "市政壹號廣場": {
+    "name": "市政壹號廣場",
+    "avgUnitPrice": 80.2,
+    "count": 351
   },
   "昌祐大薪計劃": {
     "name": "昌祐大薪計劃",
     "avgUnitPrice": 22.4,
     "count": 2
   },
+  "青海新宿": {
+    "name": "青海新宿",
+    "avgUnitPrice": 49.1,
+    "count": 28
+  },
   "聚富粼粼": {
     "name": "聚富粼粼",
     "avgUnitPrice": 67.9,
     "count": 34
+  },
+  "日興中港御園II": {
+    "name": "日興-中港御園II",
+    "avgUnitPrice": 49.6,
+    "count": 3
+  },
+  "市政澄真": {
+    "name": "市政澄真",
+    "avgUnitPrice": 53.3,
+    "count": 27
   },
   "大隱之美NO3品日子": {
     "name": "大隱之美NO.3品日子",
@@ -676,13 +1091,38 @@
   },
   "國泰森林薈": {
     "name": "國泰森林薈",
-    "avgUnitPrice": 77.6,
-    "count": 106
+    "avgUnitPrice": 77.5,
+    "count": 109
+  },
+  "碧城FJTOWER": {
+    "name": "碧城FJ TOWER",
+    "avgUnitPrice": 74.9,
+    "count": 66
+  },
+  "聯聚理安大廈": {
+    "name": "聯聚理安大廈",
+    "avgUnitPrice": 116.6,
+    "count": 44
+  },
+  "遠雄洄山行": {
+    "name": "遠雄洄山行",
+    "avgUnitPrice": 69,
+    "count": 50
+  },
+  "品天璽": {
+    "name": "品天璽",
+    "avgUnitPrice": 51.5,
+    "count": 11
   },
   "誠寓所": {
     "name": "誠寓所",
-    "avgUnitPrice": 57.1,
-    "count": 24
+    "avgUnitPrice": 57.3,
+    "count": 26
+  },
+  "元盛之心": {
+    "name": "元盛之心",
+    "avgUnitPrice": 50.6,
+    "count": 3
   },
   "心閱埕": {
     "name": "心閱埕",
@@ -697,17 +1137,22 @@
   "和瑞文心樂章": {
     "name": "和瑞文心樂章",
     "avgUnitPrice": 51.7,
-    "count": 163
+    "count": 175
   },
   "梧桐富築": {
     "name": "梧桐富築",
-    "avgUnitPrice": 48.6,
-    "count": 2
+    "avgUnitPrice": 47.8,
+    "count": 4
+  },
+  "富宇富美圖": {
+    "name": "富宇富美圖",
+    "avgUnitPrice": 62.1,
+    "count": 62
   },
   "育堂十三苑": {
     "name": "育堂十三苑",
-    "avgUnitPrice": 64.6,
-    "count": 30
+    "avgUnitPrice": 64.7,
+    "count": 31
   },
   "華揚三境": {
     "name": "華揚三境",
@@ -716,8 +1161,8 @@
   },
   "精銳ABBA": {
     "name": "精銳ABBA",
-    "avgUnitPrice": 75.4,
-    "count": 53
+    "avgUnitPrice": 75.3,
+    "count": 60
   },
   "執善": {
     "name": "執善",
@@ -729,20 +1174,35 @@
     "avgUnitPrice": 64.9,
     "count": 3
   },
+  "日興中港御園Ⅱ": {
+    "name": "日興-中港御園Ⅱ",
+    "avgUnitPrice": 50.3,
+    "count": 15
+  },
   "惠宇大然": {
     "name": "惠宇大然",
     "avgUnitPrice": 69.1,
-    "count": 120
+    "count": 131
   },
   "揆峰華": {
     "name": "揆峰華",
-    "avgUnitPrice": 67.5,
-    "count": 3
+    "avgUnitPrice": 66.3,
+    "count": 4
+  },
+  "聯聚玉衡大廈": {
+    "name": "聯聚玉衡大廈",
+    "avgUnitPrice": 110.5,
+    "count": 57
+  },
+  "浩瀚豐森態": {
+    "name": "浩瀚豐森態",
+    "avgUnitPrice": 77.8,
+    "count": 12
   },
   "南悅樂田": {
     "name": "南悅樂田",
-    "avgUnitPrice": 66.1,
-    "count": 36
+    "avgUnitPrice": 65.9,
+    "count": 43
   },
   "惠田璞悅": {
     "name": "惠田璞悅",
@@ -761,33 +1221,48 @@
   },
   "富宇玥和": {
     "name": "富宇玥和",
-    "avgUnitPrice": 58.8,
-    "count": 27
+    "avgUnitPrice": 56.7,
+    "count": 36
   },
   "豐邑泊金灣": {
     "name": "豐邑泊金灣",
     "avgUnitPrice": 66.2,
-    "count": 46
+    "count": 56
   },
   "海國?文心": {
     "name": "海國?文心",
     "avgUnitPrice": 46.7,
     "count": 3
   },
-  "日興中港御園Ⅱ": {
-    "name": "日興-中港御園Ⅱ",
-    "avgUnitPrice": 50.2,
-    "count": 1
+  "寶璽天讚": {
+    "name": "寶璽天讚",
+    "avgUnitPrice": 92.1,
+    "count": 15
+  },
+  "松承青衖": {
+    "name": "松承青衖",
+    "avgUnitPrice": 64.6,
+    "count": 6
   },
   "順天MRL": {
     "name": "順天MR.L",
-    "avgUnitPrice": 78.3,
-    "count": 57
+    "avgUnitPrice": 78.5,
+    "count": 61
   },
   "昂峰馥築": {
     "name": "昂峰馥築",
-    "avgUnitPrice": 49.7,
-    "count": 33
+    "avgUnitPrice": 49.6,
+    "count": 36
+  },
+  "怡山自在": {
+    "name": "怡山自在",
+    "avgUnitPrice": 61.6,
+    "count": 12
+  },
+  "達麗拾穗": {
+    "name": "達麗拾穗",
+    "avgUnitPrice": 73.2,
+    "count": 65
   },
   "峰境": {
     "name": "峰境",
@@ -796,38 +1271,48 @@
   },
   "鉅虹蒔荃": {
     "name": "鉅虹蒔荃",
-    "avgUnitPrice": 69.9,
-    "count": 12
+    "avgUnitPrice": 69.8,
+    "count": 14
   },
   "樂樂璵里": {
     "name": "樂樂璵里",
-    "avgUnitPrice": 64.4,
-    "count": 5
+    "avgUnitPrice": 64.5,
+    "count": 7
   },
   "鉅陞藏賦": {
     "name": "鉅陞藏賦",
-    "avgUnitPrice": 65.5,
-    "count": 48
+    "avgUnitPrice": 66,
+    "count": 58
+  },
+  "大樁園NO8": {
+    "name": "大樁園NO.8",
+    "avgUnitPrice": 52.8,
+    "count": 3
   },
   "鉅虹蒔美": {
     "name": "鉅虹蒔美",
     "avgUnitPrice": 66.7,
-    "count": 35
+    "count": 44
   },
   "豐邑GT0WER": {
     "name": "豐邑 G  T0WER",
     "avgUnitPrice": 64.5,
     "count": 2
   },
+  "鉑金愛?": {
+    "name": "鉑金愛?",
+    "avgUnitPrice": 63.9,
+    "count": 2
+  },
   "立彩FANCY": {
     "name": "立彩FANCY",
-    "avgUnitPrice": 52.5,
-    "count": 64
+    "avgUnitPrice": 52.6,
+    "count": 75
   },
   "森宇樂慕": {
     "name": "森宇樂慕",
-    "avgUnitPrice": 61.8,
-    "count": 36
+    "avgUnitPrice": 62.6,
+    "count": 46
   },
   "大漁樂芙": {
     "name": "大漁樂芙",
@@ -837,56 +1322,221 @@
   "國泰蒔萃": {
     "name": "國泰蒔萃",
     "avgUnitPrice": 71.8,
-    "count": 31
+    "count": 55
   },
   "享享益民": {
     "name": "享享益民",
-    "avgUnitPrice": 57,
-    "count": 4
+    "avgUnitPrice": 55.1,
+    "count": 9
   },
   "雙橡園1518": {
     "name": "雙橡園1518",
-    "avgUnitPrice": 87.4,
-    "count": 106
+    "avgUnitPrice": 87.6,
+    "count": 121
+  },
+  "泰御SkyIsland": {
+    "name": "泰御 Sky Island",
+    "avgUnitPrice": 85.8,
+    "count": 60
+  },
+  "育堂序麗": {
+    "name": "育堂序麗",
+    "avgUnitPrice": 67.1,
+    "count": 42
+  },
+  "勝美?上安": {
+    "name": "勝美?上安",
+    "avgUnitPrice": 64.3,
+    "count": 157
   },
   "鑫鈺知境": {
     "name": "鑫鈺知境",
-    "avgUnitPrice": 55.3,
-    "count": 13
+    "avgUnitPrice": 56.1,
+    "count": 16
   },
   "惠宇大沁": {
     "name": "惠宇大沁",
-    "avgUnitPrice": 68.3,
-    "count": 48
+    "avgUnitPrice": 68.4,
+    "count": 66
+  },
+  "惠田映悅": {
+    "name": "惠田映悅",
+    "avgUnitPrice": 50,
+    "count": 4
   },
   "石云尹之居": {
     "name": "石云尹之居",
-    "avgUnitPrice": 59.8,
+    "avgUnitPrice": 58.1,
+    "count": 11
+  },
+  "逢甲301": {
+    "name": "逢甲301",
+    "avgUnitPrice": 82.2,
     "count": 5
   },
   "亞昕織御": {
     "name": "亞昕織御",
-    "avgUnitPrice": 71,
-    "count": 75
+    "avgUnitPrice": 71.4,
+    "count": 134
+  },
+  "倉和蘭亭": {
+    "name": "倉和蘭亭",
+    "avgUnitPrice": 57.4,
+    "count": 6
+  },
+  "門門一合院": {
+    "name": "門門一合院",
+    "avgUnitPrice": 66.2,
+    "count": 4
   },
   "佳茂容馥": {
     "name": "佳茂容馥",
-    "avgUnitPrice": 62.6,
-    "count": 2
+    "avgUnitPrice": 64.6,
+    "count": 6
   },
   "浩瀚光与玥": {
     "name": "浩瀚光与玥",
-    "avgUnitPrice": 68.9,
-    "count": 2
+    "avgUnitPrice": 69.5,
+    "count": 5
   },
   "寶璟乾元": {
     "name": "寶璟乾元",
-    "avgUnitPrice": 63.6,
-    "count": 2
+    "avgUnitPrice": 63.7,
+    "count": 7
   },
   "睦昇韶光漫": {
     "name": "睦昇韶光漫",
-    "avgUnitPrice": 71.8,
+    "avgUnitPrice": 70.8,
+    "count": 4
+  },
+  "德鑫協和": {
+    "name": "德鑫協和",
+    "avgUnitPrice": 62.2,
+    "count": 4
+  },
+  "和瑞文華樂章": {
+    "name": "和瑞文華樂章",
+    "avgUnitPrice": 58.3,
+    "count": 69
+  },
+  "惠宇永益": {
+    "name": "惠宇永益",
+    "avgUnitPrice": 68.9,
+    "count": 47
+  },
+  "NEVERLAND夢島": {
+    "name": "NEVERLAND 夢．島",
+    "avgUnitPrice": 75,
+    "count": 21
+  },
+  "高工湛": {
+    "name": "高工湛",
+    "avgUnitPrice": 56.6,
+    "count": 8
+  },
+  "金林無界": {
+    "name": "金林無界",
+    "avgUnitPrice": 40.2,
     "count": 2
+  },
+  "微笑巨蛋": {
+    "name": "微笑巨蛋",
+    "avgUnitPrice": 49.1,
+    "count": 7
+  },
+  "晨朗吾与森": {
+    "name": "晨朗 吾与森",
+    "avgUnitPrice": 61.7,
+    "count": 8
+  },
+  "鉅陞大?": {
+    "name": "鉅陞大?",
+    "avgUnitPrice": 75.9,
+    "count": 20
+  },
+  "聯聚中衡大廈": {
+    "name": "聯聚中衡大廈",
+    "avgUnitPrice": 83,
+    "count": 41
+  },
+  "勝旺悅": {
+    "name": "勝旺悅",
+    "avgUnitPrice": 59.9,
+    "count": 15
+  },
+  "恆山千隅": {
+    "name": "恆山千隅",
+    "avgUnitPrice": 65.6,
+    "count": 2
+  },
+  "聚碩仁玉": {
+    "name": "聚碩仁玉",
+    "avgUnitPrice": 67.5,
+    "count": 9
+  },
+  "富精科2": {
+    "name": "富精科2",
+    "avgUnitPrice": 53.2,
+    "count": 5
+  },
+  "睦唐大隱德芳": {
+    "name": "睦唐大隱德芳",
+    "avgUnitPrice": 51.1,
+    "count": 2
+  },
+  "豐邑翫美": {
+    "name": "豐邑翫美",
+    "avgUnitPrice": 67,
+    "count": 1
+  },
+  "恬恬所在": {
+    "name": "恬恬所在",
+    "avgUnitPrice": 63,
+    "count": 5
+  },
+  "未來習作": {
+    "name": "未來習作",
+    "avgUnitPrice": 57.5,
+    "count": 4
+  },
+  "鎮宇森語間": {
+    "name": "鎮宇森語間",
+    "avgUnitPrice": 53.6,
+    "count": 12
+  },
+  "打里摺樂田田": {
+    "name": "打里摺樂田田",
+    "avgUnitPrice": 74.4,
+    "count": 11
+  },
+  "登陽康橋景美": {
+    "name": "登陽康橋景美",
+    "avgUnitPrice": 54,
+    "count": 1
+  },
+  "玉見築": {
+    "name": "玉見築",
+    "avgUnitPrice": 68.2,
+    "count": 4
+  },
+  "文森匯": {
+    "name": "文森匯",
+    "avgUnitPrice": 65.6,
+    "count": 3
+  },
+  "精晨LIFESHOW": {
+    "name": "精晨LIFE SHOW",
+    "avgUnitPrice": 53.4,
+    "count": 14
+  },
+  "百共SUI": {
+    "name": "百共SUI",
+    "avgUnitPrice": 65.1,
+    "count": 1
+  },
+  "澄捷現": {
+    "name": "澄捷現",
+    "avgUnitPrice": 48.3,
+    "count": 1
   }
 }
