@@ -7,7 +7,7 @@ import { roadWidthAt } from "@/lib/roadLookup";
 // 地段代碼對照（scripts/geocode-parcel.mjs 產出）：段名 -> [{ town, sectcode, office }]
 type SectionMap = Record<string, { town: string; sectcode: string; office: string }[]>;
 
-const TARGET_TOWNS = ["B03", "B28", "B07", "B06"]; // 南區、大里區、南屯區、西屯區（跨區同名段優先此四區）
+const TARGET_TOWNS = ["B03", "B28", "B07", "B06", "B08"]; // 南區、大里區、南屯區、西屯區、北屯區（跨區同名段優先此五區）
 const COUNTY = "B"; // 臺中市
 
 let sectionMapCache: SectionMap | null = null;

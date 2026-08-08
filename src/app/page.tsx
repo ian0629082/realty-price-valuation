@@ -32,7 +32,7 @@ const PropertyMap = dynamic(() => import("@/components/PropertyMap"), { ssr: fal
 
 const CITIES = ["台中市"];
 const DISTRICTS: Record<string, string[]> = {
-  台中市: ["南區", "大里區", "南屯區", "西屯區"],
+  台中市: ["南區", "大里區", "南屯區", "西屯區", "北屯區"],
 };
 
 export default function Home() {

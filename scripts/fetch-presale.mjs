@@ -15,8 +15,8 @@
 import fs from "node:fs";
 
 const REGION_ID = 8; // 台中市
-// 與 app 涵蓋範圍一致（591 台中 sectionid）：南區=100、大里區=107、南屯區=105、西屯區=104
-const SECTIONS = { 南區: 100, 大里區: 107, 南屯區: 105, 西屯區: 104 };
+// 與 app 涵蓋範圍一致（591 台中 sectionid）：南區=100、大里區=107、南屯區=105、西屯區=104、北屯區=103
+const SECTIONS = { 南區: 100, 大里區: 107, 南屯區: 105, 西屯區: 104, 北屯區: 103 };
 const OUTPUT_FILE = "src/data/presale.json";
 
 const UA =
